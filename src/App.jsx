@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./shopzeta.css";
+import "./Shopzeta.css";
 
 import Home from "./Home";
 import CategoryList from "./Category";
 import SubCategoryList from "./Subcategory";
 import Product from "./Product";
-import ProductDetails from "./Productdetails";
+import ProductDetails from "./ProductDetails";
 import Wishlist from "./Wishlist";
 import Cart from "./Cart";
 import Login from "./Login";
