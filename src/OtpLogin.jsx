@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+
 function OtpLogin({ setUserSession }) {
     const [mobile, setMobile] = useState("");
     const [otp, setOtp] = useState("");
@@ -9,7 +11,7 @@ function OtpLogin({ setUserSession }) {
     const [loading, setLoading] = useState(false);
     const [resending, setResending] = useState(false);
     const navigate = useNavigate();
-    const token = "dbacace63c8bf2885869b81660c2b289";
+    const token = API_TOKEN;
 
     const requestOtp = async (e) => {
         e.preventDefault();
@@ -17,7 +19,7 @@ function OtpLogin({ setUserSession }) {
         setLoading(true);
         const fd = new FormData(); fd.append("user_mobile", mobile);
         try {
-            const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-otp-login.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-otp-login.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
             if (res.data.flag === "1" || res.data.status === "1") {
                 console.log("🔑 OTP:", res.data.mobile_otp); setOtpSent(true);
             } else alert(res.data.message || "Mobile not found.");
@@ -28,7 +30,7 @@ function OtpLogin({ setUserSession }) {
         setResending(true);
         const fd = new FormData(); fd.append("user_mobile", mobile);
         try {
-            const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-otp-resend.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-otp-resend.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
             if (res.data.flag === "1" || res.data.status === "1") {
                 console.log("🔄 New OTP:", res.data.mobile_otp); alert("New OTP sent! Check console.");
             }
@@ -41,7 +43,7 @@ function OtpLogin({ setUserSession }) {
         setLoading(true);
         const fd = new FormData(); fd.append("user_mobile", mobile); fd.append("mobile_otp", otp);
         try {
-            const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-otp-verify.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-otp-verify.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
             if (res.data.flag === "1" || res.data.status === "1") {
                 const sessionData = { user_id: res.data.user_id || "4", user_name: res.data.user_name || "User", user_mobile: mobile };
                 localStorage.setItem("userSession", JSON.stringify(sessionData));

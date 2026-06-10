@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
+const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+
 function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,8 +18,8 @@ function Login({ onLoginSuccess }) {
     fd.append("user_email", email);
     fd.append("user_password", password);
     try {
-      const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-login.php", fd, {
-        headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" },
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-login.php`, fd, {
+        headers: { Authorization: `Bearer ${API_TOKEN}` },
       });
       if (res.data.flag === "1" || res.data.status === "1") {
         localStorage.setItem("userSession", JSON.stringify(res.data));

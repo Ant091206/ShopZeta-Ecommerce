@@ -2,18 +2,21 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+
 function Cart({ userSession }) {
     const [cartItems, setCartItems] = useState([]);
     const [grandTotal, setGrandTotal] = useState("0");
     const [loading, setLoading] = useState(true);
     const [removingId, setRemovingId] = useState(null);
     const navigate = useNavigate();
-    const token = "dbacace63c8bf2885869b81660c2b289";
+    const token = API_TOKEN;
 
     const fetchCart = async (s) => {
         try {
             const fd = new FormData(); fd.append("user_id", s.user_id);
-            const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-list-cart.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+            const r = await axios.post(`${API_BASE}/api-list-cart.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
             const items = r.data?.cart || r.data?.cart_list || [];
             setCartItems(items); setGrandTotal(r.data?.grand_total || "0");
         } catch (e) { console.error(e); } finally { setLoading(false); }
@@ -31,7 +34,7 @@ function Cart({ userSession }) {
         setRemovingId(cartId);
         const fd = new FormData(); fd.append("cart_id", cartId);
         try {
-            const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-delete-cart.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+            const r = await axios.post(`${API_BASE}/api-delete-cart.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
             if (r.data.flag === "1" || r.data.status === "1") {
                 const s = userSession || JSON.parse(localStorage.getItem("userSession"));
                 if (s) fetchCart(s); else setCartItems(c => c.filter(i => i.cart_id !== cartId));

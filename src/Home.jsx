@@ -112,8 +112,8 @@ function Home() {
     }, []);
 
     useEffect(() => {
-        axios.get("http://akashsir.in/atproject/at-shop/api/api-list-product.php", {
-            headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" },
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/api-list-product.php`, {
+            headers: { Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}` },
         }).then(r => {
             if (r.data?.product_list) setProducts(r.data.product_list.slice(0, 16));
         }).catch(console.error).finally(() => setLoading(false));

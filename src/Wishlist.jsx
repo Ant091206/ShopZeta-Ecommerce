@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+
 function Wishlist({ userSession }) {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [removingId, setRemovingId] = useState(null);
     const navigate = useNavigate();
-    const token = "dbacace63c8bf2885869b81660c2b289";
+    const token = API_TOKEN;
 
     const fetchWishlist = async (s) => {
         try {
             const fd = new FormData(); fd.append("user_id", s.user_id);
-            const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-list-wishlist.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+            const r = await axios.post(`${API_BASE}/api-list-wishlist.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
             setItems(r.data?.wishlist || r.data?.wishlist_list || []);
         } catch (e) { console.error(e); } finally { setLoading(false); }
     };
@@ -29,7 +32,7 @@ function Wishlist({ userSession }) {
         setRemovingId(wishlistId);
         const fd = new FormData(); fd.append("wishlist_id", wishlistId);
         try {
-            const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-delete-wishlist.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+            const r = await axios.post(`${API_BASE}/api-delete-wishlist.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
             if (r.data.flag === "1" || r.data.status === "1")
                 setItems(prev => prev.filter(i => i.wishlist_id !== wishlistId));
         } catch (e) { console.error(e); } finally { setRemovingId(null); }

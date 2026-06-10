@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+
 function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -18,8 +21,8 @@ function Signup() {
     const fd = new FormData();
     Object.entries(formData).forEach(([k, v]) => fd.append(k, v));
     try {
-      const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-signup.php", fd, {
-        headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" }
+      const res = await axios.post(`${API_BASE}/api-signup.php`, fd, {
+        headers: { Authorization: `Bearer ${API_TOKEN}` }
       });
       if (res.data.flag === "1" || res.data.status === "1" || res.data.success) {
         alert("Account created! Please sign in."); navigate("/login");

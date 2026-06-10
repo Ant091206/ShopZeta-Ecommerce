@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+
 const S = {
     bg: "var(--sz-bg)",
     surface: "var(--sz-surface)",
@@ -25,7 +28,7 @@ function Dashboard({ userSession }) {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("overview");
-    const token = "dbacace63c8bf2885869b81660c2b289";
+    const token = API_TOKEN;
     const session = userSession || JSON.parse(localStorage.getItem("userSession"));
 
     useEffect(() => {
@@ -36,9 +39,9 @@ function Dashboard({ userSession }) {
             return axios.post(url, fd, { headers: { Authorization: `Bearer ${token}` } });
         };
         Promise.all([
-            post("http://akashsir.in/atproject/at-shop/api/api-list-order.php"),
-            post("http://akashsir.in/atproject/at-shop/api/api-list-wishlist.php"),
-            post("http://akashsir.in/atproject/at-shop/api/api-list-cart.php"),
+            post(`${API_BASE}/api-list-order.php`),
+            post(`${API_BASE}/api-list-wishlist.php`),
+            post(`${API_BASE}/api-list-cart.php`),
         ]).then(([o, w, c]) => {
             setOrders(o.data?.order_list || o.data?.orders || []);
             setWishlist(w.data?.wishlist || w.data?.wishlist_list || []);

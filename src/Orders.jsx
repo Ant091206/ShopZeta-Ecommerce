@@ -2,17 +2,19 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+
 function Orders() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const token = "dbacace63c8bf2885869b81660c2b289";
+    const token = API_TOKEN;
 
     useEffect(() => {
         const s = JSON.parse(localStorage.getItem("userSession"));
         if (!s?.user_id) { setLoading(false); return; }
         const fd = new FormData(); fd.append("user_id", s.user_id);
-        axios.post("http://akashsir.in/atproject/at-shop/api/api-list-order.php", fd, { headers: { Authorization: `Bearer ${token}` } })
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-list-order.php`, fd, { headers: { Authorization: `Bearer ${token}` } })
             .then(r => setOrders(r.data?.order_list || r.data?.orders || []))
             .catch(console.error).finally(() => setLoading(false));
     }, []);

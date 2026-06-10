@@ -27,8 +27,8 @@ function Checkout() {
         fd.append("user_id", userId);
         Object.entries(formData).forEach(([k, v]) => fd.append(k, v));
         try {
-            const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-order.php", fd, {
-                headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" }
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-add-order.php`, fd, {
+                headers: { Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}` }
             });
             if (res.data.flag === "1" || res.data.status === "1") setSuccess(true);
             else alert(res.data.message || "Order failed.");
