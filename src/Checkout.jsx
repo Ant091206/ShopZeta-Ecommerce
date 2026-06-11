@@ -47,7 +47,6 @@ function Checkout() {
         fd.append("payment_status", paymentStatus);
         fd.append("amount", finalAmount);
 
-        // Use relative path or your actual backend URL (make sure it's HTTPS)
         await axios.post("https://akashsir.in/atproject/at-shop/api/api-add-order.php", fd, {
             headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" }
         });
@@ -56,7 +55,8 @@ function Checkout() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.shipping_name || !formData.shipping_mobile || !formData.shipping_address) {
-            alert("Please fill all shipping details."); return;
+            alert("Please fill all shipping details.");
+            return;
         }
 
         /* ── COD: skip Razorpay, save directly ── */
@@ -64,11 +64,11 @@ function Checkout() {
             setSubmitting(true);
             try {
                 await saveOrderToDB("COD", "Pending");
-                setSuccess(true);
+                alert("Order placed successfully! You can pay cash on delivery.");
+                navigate("/", { state: { paymentSuccess: true, message: "Order placed successfully!" } });
             } catch (error) {
                 console.error("COD error:", error);
                 alert("Something went wrong. Please try again.");
-            } finally {
                 setSubmitting(false);
             }
             return;
@@ -133,9 +133,11 @@ function Checkout() {
                             // Save order to your database
                             await saveOrderToDB(response.razorpay_payment_id, "Paid");
 
-                            alert("Payment successful! Your order has been placed.");
                             localStorage.removeItem("cart");
-                            navigate("/order-success", { state: { orderId: response.razorpay_order_id } });
+
+                            // Redirect to home page with success state
+                            alert("Payment successful! Your order has been placed.");
+                            navigate("/", { state: { paymentSuccess: true, orderId: response.razorpay_order_id } });
                         } else {
                             alert("Payment verification failed. Please contact support.");
                             setSubmitting(false);
@@ -173,6 +175,7 @@ function Checkout() {
         }
     };
 
+    // Show success message if redirected from payment
     if (success) return (
         <div className="d-flex align-items-center justify-content-center px-3" style={{ minHeight: "calc(100vh - 68px)" }}>
             <div className="sz-auth-card p-5 text-center" style={{ maxWidth: "500px", width: "100%" }}>
