@@ -10,6 +10,25 @@ function Checkout() {
     const [formData, setFormData] = useState({ shipping_name: "", shipping_mobile: "", shipping_address: "", payment_method: "COD" });
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+
+    // Load Razorpay script
+    useEffect(() => {
+        if (window.Razorpay) {
+            setRazorpayLoaded(true);
+            return;
+        }
+
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.async = true;
+        script.onload = () => setRazorpayLoaded(true);
+        document.body.appendChild(script);
+
+        return () => {
+            if (script.parentNode) document.body.removeChild(script);
+        };
+    }, []);
 
     useEffect(() => {
         const s = JSON.parse(localStorage.getItem("userSession"));
@@ -20,13 +39,16 @@ function Checkout() {
     const handleChange = (e) => setFormData(p => ({ ...p, [e.target.name]: e.target.value }));
 
     /* ── Save order in your DB after successful payment ── */
-    const saveOrderToDB = async (paymentId) => {
+    const saveOrderToDB = async (paymentId, paymentStatus = "Paid") => {
         const fd = new FormData();
         fd.append("user_id", userId);
         Object.entries(formData).forEach(([k, v]) => fd.append(k, v));
         fd.append("payment_id", paymentId);
-        fd.append("payment_status", "Paid");
-        await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-order.php", fd, {
+        fd.append("payment_status", paymentStatus);
+        fd.append("amount", finalAmount);
+
+        // Use relative path or your actual backend URL (make sure it's HTTPS)
+        await axios.post("https://akashsir.in/atproject/at-shop/api/api-add-order.php", fd, {
             headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" }
         });
     };
@@ -41,35 +63,46 @@ function Checkout() {
         if (formData.payment_method === "COD") {
             setSubmitting(true);
             try {
-                await saveOrderToDB("COD");
+                await saveOrderToDB("COD", "Pending");
                 setSuccess(true);
-            } catch { alert("Something went wrong."); }
-            finally { setSubmitting(false); }
+            } catch (error) {
+                console.error("COD error:", error);
+                alert("Something went wrong. Please try again.");
+            } finally {
+                setSubmitting(false);
+            }
             return;
         }
 
         /* ── Card / UPI: go through Razorpay ── */
+        if (!razorpayLoaded) {
+            alert("Payment gateway is loading. Please try again.");
+            return;
+        }
+
         setSubmitting(true);
         try {
             /* Step 1: Ask your backend to create a Razorpay order */
-            const fd = new FormData();
-            fd.append("amount", finalAmount);
             const { data: rzpOrder } = await axios.post(
                 "/api/create-order",
                 { amount: finalAmount },
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            if (!rzpOrder.id) { alert("Could not initiate payment. Try again."); setSubmitting(false); return; }
+            if (!rzpOrder.id) {
+                alert("Could not initiate payment. Try again.");
+                setSubmitting(false);
+                return;
+            }
 
             /* Step 2: Open Razorpay checkout popup */
             const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY_ID,   // rzp_test_XXXX from .env
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
                 amount: rzpOrder.amount,
                 currency: rzpOrder.currency,
                 order_id: rzpOrder.id,
                 name: "ShopZeta",
-                description: "Order Payment",
+                description: `Order Payment - ₹${finalAmount}`,
                 image: "/vite.svg",
                 prefill: {
                     name: formData.shipping_name,
@@ -79,36 +112,42 @@ function Checkout() {
 
                 /* Step 3: Payment SUCCESS handler */
                 handler: async (response) => {
-                    /* response contains:
-                       razorpay_payment_id, razorpay_order_id, razorpay_signature
-                       Send these to your backend to VERIFY the signature */
-                    try {
-                        const vfd = new FormData();
-                        vfd.append("razorpay_payment_id", response.razorpay_payment_id);
-                        vfd.append("razorpay_order_id", response.razorpay_order_id);
-                        vfd.append("razorpay_signature", response.razorpay_signature);
+                    console.log("Payment response:", response);
 
-                        const { data: verify } = await axios.post(
-                            "/api/verify-payment",
-                            {
+                    try {
+                        // Send verification to YOUR Vercel API
+                        const verifyRes = await fetch("/api/verify-payment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
                                 razorpay_payment_id: response.razorpay_payment_id,
                                 razorpay_order_id: response.razorpay_order_id,
                                 razorpay_signature: response.razorpay_signature,
-                            },
-                            { headers: { "Content-Type": "application/json" } }
-                        );
+                            }),
+                        });
 
-                        if (verify.valid) {
-                            await saveOrderToDB(response.razorpay_payment_id);
-                            setSuccess(true);
+                        const result = await verifyRes.json();
+                        console.log("Verification result:", result);
+
+                        if (result.valid) {
+                            // Save order to your database
+                            await saveOrderToDB(response.razorpay_payment_id, "Paid");
+
+                            alert("Payment successful! Your order has been placed.");
+                            localStorage.removeItem("cart");
+                            navigate("/order-success", { state: { orderId: response.razorpay_order_id } });
                         } else {
-                            alert("Payment verification failed. Contact support.");
+                            alert("Payment verification failed. Please contact support.");
+                            setSubmitting(false);
                         }
-                    } catch { alert("Error verifying payment."); }
-                    finally { setSubmitting(false); }
+                    } catch (error) {
+                        console.error("Verification error:", error);
+                        alert("Error verifying payment. Please check your order status.");
+                        setSubmitting(false);
+                    }
                 },
 
-                /* Step 4: Payment FAILURE / modal close */
+                /* Step 4: Payment modal close without payment */
                 modal: {
                     ondismiss: () => {
                         setSubmitting(false);
@@ -118,14 +157,17 @@ function Checkout() {
             };
 
             const rzp = new window.Razorpay(options);
+
             rzp.on("payment.failed", (resp) => {
+                console.error("Payment failed:", resp);
                 setSubmitting(false);
-                alert(`Payment failed: ${resp.error.description}`);
+                alert(`Payment failed: ${resp.error.description || "Please try again"}`);
             });
+
             rzp.open();
 
         } catch (err) {
-            console.error(err);
+            console.error("Razorpay initialization error:", err);
             alert("Could not connect to payment gateway. Please try again.");
             setSubmitting(false);
         }
@@ -145,7 +187,11 @@ function Checkout() {
         </div>
     );
 
-    const payMethods = [["COD", "💵", "Cash on Delivery"], ["Card", "💳", "Credit / Debit Card"], ["UPI", "📱", "UPI / Net Banking"]];
+    const payMethods = [
+        ["COD", "💵", "Cash on Delivery"],
+        ["Card", "💳", "Credit / Debit Card"],
+        ["UPI", "📱", "UPI / Net Banking"]
+    ];
 
     return (
         <div className="container-xl py-4 px-3 px-md-4" style={{ maxWidth: "640px" }}>
