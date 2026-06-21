@@ -1,91 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-
-function HeroVisual({ navigate }) {
-    return (
-        <div onClick={() => navigate("/products")} className="w-100" style={{ cursor: "pointer" }}>
-            <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "auto", display: "block", overflow: "visible" }}>
-                <defs>
-                    <linearGradient id="laptopLid" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#334155" /><stop offset="100%" stopColor="#1e293b" /></linearGradient>
-                    <linearGradient id="phoneGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1e293b" /><stop offset="100%" stopColor="#0f172a" /></linearGradient>
-                    <linearGradient id="glowLine" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stopColor="transparent" /><stop offset="50%" stopColor="#6366f1" stopOpacity="0.8" /><stop offset="100%" stopColor="transparent" /></linearGradient>
-                    <filter id="softShadow"><feDropShadow dx="0" dy="8" stdDeviation="12" floodColor="#000" floodOpacity="0.5" /></filter>
-                </defs>
-                <ellipse cx="200" cy="170" rx="160" ry="100" fill="#6366f1" fillOpacity="0.06" />
-                <ellipse cx="390" cy="130" rx="100" ry="80" fill="#8b5cf6" fillOpacity="0.08" />
-                <g filter="url(#softShadow)">
-                    <rect x="80" y="30" width="238" height="152" rx="10" fill="url(#laptopLid)" />
-                    <rect x="88" y="38" width="222" height="138" rx="6" fill="#0a0a14" />
-                    <rect x="92" y="42" width="214" height="130" rx="4" fill="#0f172a" />
-                    <rect x="92" y="42" width="214" height="20" fill="#1e293b" />
-                    <rect x="92" y="42" width="214" height="3" fill="#6366f1" fillOpacity="0.8" />
-                    <circle cx="103" cy="52" r="4" fill="#6366f1" fillOpacity="0.7" />
-                    <rect x="112" y="49" width="40" height="6" rx="3" fill="#334155" />
-                    <rect x="158" y="49" width="28" height="6" rx="3" fill="#334155" />
-                    <rect x="264" y="49" width="22" height="6" rx="3" fill="#6366f1" fillOpacity="0.8" />
-                    <rect x="100" y="70" width="90" height="92" rx="6" fill="#1e293b" stroke="#334155" strokeWidth="0.5" />
-                    <rect x="106" y="76" width="78" height="48" rx="4" fill="#0f172a" />
-                    <rect x="122" y="86" width="46" height="30" rx="3" fill="#334155" />
-                    <rect x="125" y="89" width="40" height="24" rx="2" fill="#1e40af" fillOpacity="0.6" />
-                    <rect x="110" y="128" width="40" height="5" rx="2" fill="#334155" />
-                    <rect x="112" y="148" width="54" height="10" rx="4" fill="#6366f1" fillOpacity="0.85" />
-                    <text x="139" y="157" fontSize="6" fill="white" textAnchor="middle" fontFamily="sans-serif" fontWeight="700">Add to Cart</text>
-                    <rect x="200" y="70" width="90" height="92" rx="6" fill="#1e293b" stroke="#334155" strokeWidth="0.5" />
-                    <rect x="206" y="76" width="78" height="48" rx="4" fill="#0f172a" />
-                    <rect x="229" y="82" width="24" height="38" rx="4" fill="#334155" />
-                    <rect x="231" y="85" width="20" height="32" rx="2" fill="#0ea5e9" fillOpacity="0.5" />
-                    <rect x="212" y="148" width="54" height="10" rx="4" fill="#10b981" fillOpacity="0.85" />
-                    <text x="239" y="157" fontSize="6" fill="white" textAnchor="middle" fontFamily="sans-serif" fontWeight="700">Add to Cart</text>
-                    <circle cx="199" cy="34" r="2.5" fill="#1e293b" /><circle cx="199" cy="34" r="1.2" fill="#374151" />
-                </g>
-                <g filter="url(#softShadow)">
-                    <path d="M60 182 Q60 178 65 178 L333 178 Q338 178 338 182 L344 198 Q344 202 340 202 L58 202 Q54 202 54 198 Z" fill="#1e293b" />
-                    <rect x="166" y="184" width="66" height="12" rx="3" fill="#0f172a" stroke="#334155" strokeWidth="0.5" />
-                </g>
-                <g filter="url(#softShadow)">
-                    <rect x="358" y="52" width="80" height="144" rx="14" fill="url(#phoneGrad)" stroke="#334155" strokeWidth="1" />
-                    <rect x="362" y="60" width="72" height="128" rx="10" fill="#0a0f1e" />
-                    <rect x="386" y="60" width="24" height="6" rx="3" fill="#1e293b" />
-                    <rect x="362" y="66" width="72" height="12" fill="#111827" />
-                    <rect x="366" y="82" width="64" height="80" rx="6" fill="#1e293b" />
-                    <rect x="370" y="86" width="56" height="36" rx="4" fill="#0f172a" />
-                    <rect x="381" y="90" width="34" height="28" rx="5" fill="#374151" />
-                    <circle cx="398" cy="104" r="10" fill="#1e40af" fillOpacity="0.4" />
-                    <line x1="398" y1="97" x2="398" y2="104" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" />
-                    <line x1="398" y1="104" x2="403" y2="104" stroke="#a5b4fc" strokeWidth="1.5" strokeLinecap="round" />
-                    <rect x="370" y="142" width="56" height="14" rx="5" fill="#6366f1" fillOpacity="0.85" />
-                    <text x="398" y="152" fontSize="5.5" fill="white" textAnchor="middle" fontFamily="sans-serif" fontWeight="700">Buy Now</text>
-                    <rect x="385" y="178" width="26" height="3" rx="2" fill="#374151" />
-                    <rect x="357" y="90" width="2" height="16" rx="1" fill="#374151" />
-                    <rect x="438" y="95" width="2" height="22" rx="1" fill="#374151" />
-                </g>
-                <rect x="22" y="58" width="90" height="34" rx="8" fill="#1e293b" stroke="#6366f1" strokeWidth="0.8" strokeOpacity="0.5" />
-                <text x="32" y="72" fontSize="10" fill="#6366f1" fontFamily="sans-serif">🚚</text>
-                <text x="46" y="72" fontSize="7" fill="#f1f1f3" fontFamily="sans-serif" fontWeight="700">Free Shipping</text>
-                <text x="46" y="82" fontSize="6" fill="#6b7280" fontFamily="sans-serif">On all orders</text>
-                <rect x="22" y="108" width="82" height="34" rx="8" fill="#1e293b" stroke="#f59e0b" strokeWidth="0.8" strokeOpacity="0.5" />
-                <text x="32" y="122" fontSize="10" fill="#f59e0b" fontFamily="sans-serif">★</text>
-                <text x="46" y="122" fontSize="8" fill="#f59e0b" fontFamily="sans-serif" fontWeight="700">4.9 / 5.0</text>
-                <text x="46" y="132" fontSize="6" fill="#6b7280" fontFamily="sans-serif">50K+ Reviews</text>
-                <rect x="22" y="158" width="82" height="34" rx="8" fill="#1e293b" stroke="#10b981" strokeWidth="0.8" strokeOpacity="0.5" />
-                <text x="32" y="172" fontSize="10" fill="#10b981" fontFamily="sans-serif">🔒</text>
-                <text x="46" y="172" fontSize="7" fill="#f1f1f3" fontFamily="sans-serif" fontWeight="700">Secure Pay</text>
-                <text x="46" y="182" fontSize="6" fill="#6b7280" fontFamily="sans-serif">100% Safe</text>
-                <rect x="80" y="202" width="260" height="1.5" rx="1" fill="url(#glowLine)" />
-                <rect x="130" y="214" width="120" height="36" rx="10" fill="#6366f1" fillOpacity="0.15" stroke="#6366f1" strokeWidth="0.8" strokeOpacity="0.5" />
-                <text x="160" y="228" fontSize="7" fill="#a5b4fc" fontFamily="sans-serif" fontWeight="600">Starting from</text>
-                <text x="160" y="243" fontSize="13" fill="#6366f1" fontFamily="sans-serif" fontWeight="800">₹250 only</text>
-                <text x="140" y="236" fontSize="16" fill="#6366f1" fontFamily="sans-serif">🏷️</text>
-                <rect x="310" y="216" width="120" height="28" rx="14" fill="#10b981" fillOpacity="0.12" stroke="#10b981" strokeWidth="0.8" strokeOpacity="0.5" />
-                <text x="340" y="226" fontSize="7" fill="#10b981" fontFamily="sans-serif" fontWeight="700">New Arrivals</text>
-                <text x="340" y="237" fontSize="6" fill="#6b7280" fontFamily="sans-serif">10,000+ Products</text>
-                <circle cx="460" cy="60" r="3" fill="#6366f1" fillOpacity="0.5" />
-                <circle cx="474" cy="75" r="2" fill="#8b5cf6" fillOpacity="0.4" />
-            </svg>
-        </div>
-    );
-}
+import fashionImg from "./assets/fashion.png";
+import electronicsImg from "./assets/electronics.png";
 
 function Home() {
     const [products, setProducts] = useState([]);
@@ -257,8 +174,62 @@ function Home() {
                                 ))}
                             </div>
                         </div>
-                        <div className="col-md-6 d-flex align-items-center justify-content-center p-3 p-md-4">
-                            <HeroVisual navigate={navigate} />
+
+                        {/* Bootstrap Crossfade Carousel — Fashion & Electronics */}
+                        <div className="col-md-6 d-flex align-items-center justify-content-center p-2 p-md-3">
+                            <div
+                                id="heroCarousel"
+                                className="carousel slide carousel-fade w-100"
+                                data-bs-ride="carousel"
+                                data-bs-interval="3500"
+                                style={{ borderRadius: "14px", overflow: "hidden", boxShadow: "0 8px 40px rgba(0,0,0,0.45)" }}
+                            >
+                                <div className="carousel-indicators" style={{ bottom: "10px" }}>
+                                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" className="active"
+                                        style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#fff", border: "none", opacity: 0.9, margin: "0 3px" }}
+                                        aria-current="true" aria-label="Fashion" />
+                                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"
+                                        style={{ width: "8px", height: "8px", borderRadius: "50%", background: "rgba(255,255,255,0.5)", border: "none", margin: "0 3px" }}
+                                        aria-label="Electronics" />
+                                </div>
+
+                                <div className="carousel-inner">
+                                    {/* Slide 1 — Fashion */}
+                                    <div className="carousel-item active">
+                                        <img src={fashionImg} alt="Fashion & Clothing Store"
+                                            style={{ width: "100%", height: "320px", objectFit: "cover", objectPosition: "center", display: "block" }} />
+                                        <div className="carousel-caption" style={{
+                                            background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.75) 45%, transparent 100%)",
+                                            bottom: 0, left: 0, right: 0, padding: "48px 18px 18px", textAlign: "left", borderRadius: "0 0 14px 14px"
+                                        }}>
+                                            <div style={{ fontSize: "10px", fontWeight: 800, color: "#f59e0b", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "4px", textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>✦ Fashion & Style</div>
+                                            <div style={{ fontSize: "16px", fontWeight: 800, color: "#fff", textShadow: "0 1px 6px rgba(0,0,0,0.9)" }}>Premium Clothing Collection</div>
+                                            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.85)", marginTop: "2px", textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>Curated fashion for every occasion</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Slide 2 — Electronics */}
+                                    <div className="carousel-item">
+                                        <img src={electronicsImg} alt="Electronics & Tech Store"
+                                            style={{ width: "100%", height: "320px", objectFit: "cover", objectPosition: "center", display: "block" }} />
+                                        <div className="carousel-caption" style={{
+                                            background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.75) 45%, transparent 100%)",
+                                            bottom: 0, left: 0, right: 0, padding: "48px 18px 18px", textAlign: "left", borderRadius: "0 0 14px 14px"
+                                        }}>
+                                            <div style={{ fontSize: "10px", fontWeight: 800, color: "#8398ff", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "4px", textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>⚡ Tech Hub</div>
+                                            <div style={{ fontSize: "16px", fontWeight: 800, color: "#fff", textShadow: "0 1px 6px rgba(0,0,0,0.9)" }}>Latest Electronics & Gadgets</div>
+                                            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.85)", marginTop: "2px", textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>Cutting-edge tech at your fingertips</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button className="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" style={{ width: "36px", left: "8px" }}>
+                                    <span style={{ width: "28px", height: "28px", borderRadius: "50%", background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "16px" }}>‹</span>
+                                </button>
+                                <button className="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" style={{ width: "36px", right: "8px" }}>
+                                    <span style={{ width: "28px", height: "28px", borderRadius: "50%", background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "16px" }}>›</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

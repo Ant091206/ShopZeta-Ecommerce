@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./Shopzeta.css";
 
 import Home from "./Home";
