@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+import { toast } from "react-toastify";
 
 function OtpLogin({ setUserSession }) {
     const [mobile, setMobile] = useState("");
@@ -11,46 +10,47 @@ function OtpLogin({ setUserSession }) {
     const [loading, setLoading] = useState(false);
     const [resending, setResending] = useState(false);
     const navigate = useNavigate();
-    const token = API_TOKEN;
+    const token = "dbacace63c8bf2885869b81660c2b289";
 
     const requestOtp = async (e) => {
         e.preventDefault();
-        if (!/^\d{10}$/.test(mobile)) { alert("Enter a valid 10-digit number."); return; }
+        if (!/^\d{10}$/.test(mobile)) { toast.warning("Enter a valid 10-digit number."); return; }
         setLoading(true);
         const fd = new FormData(); fd.append("user_mobile", mobile);
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-otp-login.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-otp-login.php", fd, { headers: { Authorization: `Bearer ${token}` } });
             if (res.data.flag === "1" || res.data.status === "1") {
                 console.log("🔑 OTP:", res.data.mobile_otp); setOtpSent(true);
-            } else alert(res.data.message || "Mobile not found.");
-        } catch { alert("Network error."); } finally { setLoading(false); }
+            } else toast.error(res.data.message || "Mobile not found.");
+        } catch { toast.error("Network error."); } finally { setLoading(false); }
     };
 
     const resendOtp = async () => {
         setResending(true);
         const fd = new FormData(); fd.append("user_mobile", mobile);
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-otp-resend.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-otp-resend.php", fd, { headers: { Authorization: `Bearer ${token}` } });
             if (res.data.flag === "1" || res.data.status === "1") {
-                console.log("🔄 New OTP:", res.data.mobile_otp); alert("New OTP sent! Check console.");
+                console.log("🔄 New OTP:", res.data.mobile_otp); toast.success("New OTP sent! Check console.");
             }
         } catch { console.error("Resend failed"); } finally { setResending(false); }
     };
 
     const verifyOtp = async (e) => {
         e.preventDefault();
-        if (!otp) { alert("Enter the OTP."); return; }
+        if (!otp) { toast.warning("Enter the OTP."); return; }
         setLoading(true);
         const fd = new FormData(); fd.append("user_mobile", mobile); fd.append("mobile_otp", otp);
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-otp-verify.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-otp-verify.php", fd, { headers: { Authorization: `Bearer ${token}` } });
             if (res.data.flag === "1" || res.data.status === "1") {
                 const sessionData = { user_id: res.data.user_id || "4", user_name: res.data.user_name || "User", user_mobile: mobile };
                 localStorage.setItem("userSession", JSON.stringify(sessionData));
                 if (setUserSession) setUserSession(sessionData);
+                toast.success(`Welcome back, ${sessionData.user_name}! 👋`);
                 navigate("/");
-            } else alert(res.data.message || "Incorrect OTP.");
-        } catch { alert("Verification failed."); } finally { setLoading(false); }
+            } else toast.error(res.data.message || "Incorrect OTP.");
+        } catch { toast.error("Verification failed."); } finally { setLoading(false); }
     };
 
     return (

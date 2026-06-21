@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+import { toast } from "react-toastify";
 
 function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState("");
@@ -18,14 +17,15 @@ function Login({ onLoginSuccess }) {
     fd.append("user_email", email);
     fd.append("user_password", password);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-login.php`, fd, {
-        headers: { Authorization: `Bearer ${API_TOKEN}` },
+      const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-login.php", fd, {
+        headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" },
       });
       if (res.data.flag === "1" || res.data.status === "1") {
         localStorage.setItem("userSession", JSON.stringify(res.data));
+        toast.success(`Welcome back, ${res.data.user_name || "there"}! 👋`);
         onLoginSuccess(res.data);
-      } else alert(res.data.message || "Invalid credentials.");
-    } catch (err) { console.error(err); alert("Login failed."); }
+      } else toast.error(res.data.message || "Invalid credentials.");
+    } catch (err) { console.error(err); toast.error("Login failed."); }
     finally { setLoading(false); }
   };
 

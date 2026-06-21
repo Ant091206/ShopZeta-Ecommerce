@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+import { toast } from "react-toastify";
 
 const S = {
     bg: "var(--sz-bg)",
@@ -28,7 +26,7 @@ function Dashboard({ userSession }) {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("overview");
-    const token = API_TOKEN;
+    const token = "dbacace63c8bf2885869b81660c2b289";
     const session = userSession || JSON.parse(localStorage.getItem("userSession"));
 
     useEffect(() => {
@@ -39,9 +37,9 @@ function Dashboard({ userSession }) {
             return axios.post(url, fd, { headers: { Authorization: `Bearer ${token}` } });
         };
         Promise.all([
-            post(`${API_BASE}/api-list-order.php`),
-            post(`${API_BASE}/api-list-wishlist.php`),
-            post(`${API_BASE}/api-list-cart.php`),
+            post("http://akashsir.in/atproject/at-shop/api/api-list-order.php"),
+            post("http://akashsir.in/atproject/at-shop/api/api-list-wishlist.php"),
+            post("http://akashsir.in/atproject/at-shop/api/api-list-cart.php"),
         ]).then(([o, w, c]) => {
             setOrders(o.data?.order_list || o.data?.orders || []);
             setWishlist(w.data?.wishlist || w.data?.wishlist_list || []);
@@ -377,7 +375,7 @@ function Dashboard({ userSession }) {
                             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                                 <button onClick={() => navigate("/orders")} style={{ padding: "9px 18px", background: S.accent, color: "#fff", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>📦 My Orders</button>
                                 <button onClick={() => navigate("/wishlist")} style={{ padding: "9px 18px", background: "transparent", color: S.text, border: `1px solid ${S.border}`, borderRadius: "8px", fontWeight: 600, fontSize: "13px", cursor: "pointer" }}>♡ Wishlist</button>
-                                <button onClick={() => { localStorage.removeItem("userSession"); navigate("/login"); }} style={{ padding: "9px 18px", background: "rgba(239,68,68,0.08)", color: S.danger, border: "1px solid rgba(239,68,68,0.25)", borderRadius: "8px", fontWeight: 600, fontSize: "13px", cursor: "pointer" }}>Sign Out</button>
+                                <button onClick={() => { localStorage.removeItem("userSession"); toast.info("You've been signed out. See you soon! 👋"); navigate("/login"); }} style={{ padding: "9px 18px", background: "rgba(239,68,68,0.08)", color: S.danger, border: "1px solid rgba(239,68,68,0.25)", borderRadius: "8px", fontWeight: 600, fontSize: "13px", cursor: "pointer" }}>Sign Out</button>
                             </div>
                         </div>
                     </div>

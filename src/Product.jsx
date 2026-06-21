@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+import { toast } from "react-toastify";
 
 /* ── Inline styles using CSS vars so light/dark mode both work ── */
 const S = {
@@ -67,20 +65,20 @@ const S = {
 };
 
 function FilterPanel({ products, filters, setFilters, onClear }) {
-  const [priceExpanded, setPriceExpanded]     = useState(true);
-  const [ratingExpanded, setRatingExpanded]   = useState(true);
-  const [sortExpanded, setSortExpanded]       = useState(true);
-  const [availExpanded, setAvailExpanded]     = useState(true);
-  const [hoveredRow, setHoveredRow]           = useState(null);
+  const [priceExpanded, setPriceExpanded] = useState(true);
+  const [ratingExpanded, setRatingExpanded] = useState(true);
+  const [sortExpanded, setSortExpanded] = useState(true);
+  const [availExpanded, setAvailExpanded] = useState(true);
+  const [hoveredRow, setHoveredRow] = useState(null);
 
   /* Derive price range from actual products */
   const maxPrice = useMemo(() =>
     products.length ? Math.ceil(Math.max(...products.map(p => parseFloat(p.product_price) || 0)) / 100) * 100 : 100000
-  , [products]);
+    , [products]);
 
   const minPrice = useMemo(() =>
     products.length ? Math.floor(Math.min(...products.map(p => parseFloat(p.product_price) || 0)) / 100) * 100 : 0
-  , [products]);
+    , [products]);
 
   /* Set default price range when products load */
   useEffect(() => {
@@ -90,11 +88,11 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
   }, [products]);
 
   const sortOptions = [
-    { value: "default",    label: "Default"         },
-    { value: "price-asc",  label: "Price: Low → High" },
+    { value: "default", label: "Default" },
+    { value: "price-asc", label: "Price: Low → High" },
     { value: "price-desc", label: "Price: High → Low" },
-    { value: "name-asc",   label: "Name: A → Z"      },
-    { value: "name-desc",  label: "Name: Z → A"      },
+    { value: "name-asc", label: "Name: A → Z" },
+    { value: "name-desc", label: "Name: Z → A" },
   ];
 
   const ratingOptions = [5, 4, 3, 2, 1];
@@ -108,7 +106,7 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
             <span style={{
               width: "6px", height: "6px", borderRadius: "50%",
               background: "var(--sz-accent)", display: "inline-block"
-            }}/>
+            }} />
           )}
           <button onClick={toggle} style={{
             background: "none", border: "none", cursor: "pointer",
@@ -128,7 +126,7 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sz-accent)" strokeWidth="2.5" strokeLinecap="round">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
           </svg>
           <span style={{ fontSize: "14px", fontWeight: 800, color: "var(--sz-text)" }}>Filters</span>
         </div>
@@ -163,7 +161,7 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
         </div>
       </Section>
 
-      <div style={S.divider}/>
+      <div style={S.divider} />
 
       {/* ── PRICE RANGE ── */}
       <Section title="Price Range" expanded={priceExpanded} toggle={() => setPriceExpanded(p => !p)}
@@ -202,10 +200,10 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
         {/* Quick price tags */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "10px" }}>
           {[
-            { label: "Under ₹500",  min: 0,     max: 500   },
-            { label: "₹500–₹2K",   min: 500,   max: 2000  },
-            { label: "₹2K–₹10K",   min: 2000,  max: 10000 },
-            { label: "₹10K+",       min: 10000, max: maxPrice },
+            { label: "Under ₹500", min: 0, max: 500 },
+            { label: "₹500–₹2K", min: 500, max: 2000 },
+            { label: "₹2K–₹10K", min: 2000, max: 10000 },
+            { label: "₹10K+", min: 10000, max: maxPrice },
           ].map(r => {
             const active = filters.priceMin === r.min && filters.priceMax === r.max;
             return (
@@ -219,7 +217,7 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
         </div>
       </Section>
 
-      <div style={S.divider}/>
+      <div style={S.divider} />
 
       {/* ── MIN RATING ── */}
       <Section title="Min Rating" expanded={ratingExpanded} toggle={() => setRatingExpanded(p => !p)}
@@ -238,7 +236,7 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
         </div>
       </Section>
 
-      <div style={S.divider}/>
+      <div style={S.divider} />
 
       {/* ── AVAILABILITY ── */}
       <Section title="Availability" expanded={availExpanded} toggle={() => setAvailExpanded(p => !p)}
@@ -260,7 +258,7 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
         </div>
       </Section>
 
-      <div style={S.divider}/>
+      <div style={S.divider} />
 
       {/* ── SEARCH ── */}
       <div>
@@ -270,7 +268,7 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
         <div style={{ position: "relative" }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sz-muted)" strokeWidth="2"
             style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}>
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <input
             type="text"
@@ -293,42 +291,42 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
       {/* ── ACTIVE FILTERS SUMMARY ── */}
       {(filters.search || filters.minRating > 0 || filters.inStockOnly || filters.sort !== "default" ||
         filters.priceMin > minPrice || filters.priceMax < maxPrice) && (
-        <div style={{ marginTop: "16px", padding: "10px 12px", background: "rgba(99,102,241,0.07)", borderRadius: "10px", border: "1px solid rgba(99,102,241,0.15)" }}>
-          <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--sz-accent)", marginBottom: "6px" }}>ACTIVE FILTERS</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
-            {filters.sort !== "default" && (
-              <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
-                {sortOptions.find(s => s.value === filters.sort)?.label}
-                <button onClick={() => setFilters(f => ({ ...f, sort: "default" }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
-              </span>
-            )}
-            {(filters.priceMin > minPrice || filters.priceMax < maxPrice) && (
-              <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
-                ₹{filters.priceMin.toLocaleString()}–₹{filters.priceMax.toLocaleString()}
-                <button onClick={() => setFilters(f => ({ ...f, priceMin: minPrice, priceMax: maxPrice }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
-              </span>
-            )}
-            {filters.minRating > 0 && (
-              <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
-                {"★".repeat(filters.minRating)}+
-                <button onClick={() => setFilters(f => ({ ...f, minRating: 0 }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
-              </span>
-            )}
-            {filters.inStockOnly && (
-              <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
-                In Stock
-                <button onClick={() => setFilters(f => ({ ...f, inStockOnly: false }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
-              </span>
-            )}
-            {filters.search && (
-              <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
-                "{filters.search}"
-                <button onClick={() => setFilters(f => ({ ...f, search: "" }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
-              </span>
-            )}
+          <div style={{ marginTop: "16px", padding: "10px 12px", background: "rgba(99,102,241,0.07)", borderRadius: "10px", border: "1px solid rgba(99,102,241,0.15)" }}>
+            <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--sz-accent)", marginBottom: "6px" }}>ACTIVE FILTERS</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
+              {filters.sort !== "default" && (
+                <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
+                  {sortOptions.find(s => s.value === filters.sort)?.label}
+                  <button onClick={() => setFilters(f => ({ ...f, sort: "default" }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
+                </span>
+              )}
+              {(filters.priceMin > minPrice || filters.priceMax < maxPrice) && (
+                <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
+                  ₹{filters.priceMin.toLocaleString()}–₹{filters.priceMax.toLocaleString()}
+                  <button onClick={() => setFilters(f => ({ ...f, priceMin: minPrice, priceMax: maxPrice }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
+                </span>
+              )}
+              {filters.minRating > 0 && (
+                <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
+                  {"★".repeat(filters.minRating)}+
+                  <button onClick={() => setFilters(f => ({ ...f, minRating: 0 }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
+                </span>
+              )}
+              {filters.inStockOnly && (
+                <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
+                  In Stock
+                  <button onClick={() => setFilters(f => ({ ...f, inStockOnly: false }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
+                </span>
+              )}
+              {filters.search && (
+                <span style={{ ...S.tag, ...S.tagActive, fontSize: "11px", padding: "2px 8px" }}>
+                  "{filters.search}"
+                  <button onClick={() => setFilters(f => ({ ...f, search: "" }))} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--sz-accent)", marginLeft: "4px", padding: 0, fontSize: "11px" }}>✕</button>
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }
@@ -337,29 +335,29 @@ function FilterPanel({ products, filters, setFilters, onClear }) {
    MAIN PRODUCT PAGE
 ══════════════════════════════════════ */
 const DEFAULT_FILTERS = {
-  sort:        "default",
-  priceMin:    0,
-  priceMax:    999999,
-  minRating:   0,
+  sort: "default",
+  priceMin: 0,
+  priceMax: 999999,
+  minRating: 0,
   inStockOnly: false,
-  search:      "",
+  search: "",
 };
 
 function Product() {
   const { subCategoryId } = useParams();
-  const [products,      setProducts]      = useState([]);
-  const [loading,       setLoading]       = useState(true);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [cartLoadingId, setCartLoadingId] = useState(null);
-  const [addedId,       setAddedId]       = useState(null);
-  const [filters,       setFilters]       = useState(DEFAULT_FILTERS);
-  const [sidebarOpen,   setSidebarOpen]   = useState(false); // mobile
+  const [addedId, setAddedId] = useState(null);
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // mobile
   const navigate = useNavigate();
-  const token = API_TOKEN;
+  const token = "dbacace63c8bf2885869b81660c2b289";
 
   useEffect(() => {
     setLoading(true);
     setFilters(DEFAULT_FILTERS);
-          let url = `${API_BASE}/api-list-product.php`;
+    let url = "http://akashsir.in/atproject/at-shop/api/api-list-product.php";
     if (subCategoryId) url += `?sub_category_id=${subCategoryId}`;
     axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => setProducts(r.data?.product_list || []))
@@ -369,16 +367,16 @@ function Product() {
   const handleAddToCart = async (e, productId) => {
     e.stopPropagation();
     const s = JSON.parse(localStorage.getItem("userSession"));
-    if (!s?.user_id) { alert("Please login first."); navigate("/login"); return; }
+    if (!s?.user_id) { toast.warning("Please login first."); navigate("/login"); return; }
     setCartLoadingId(productId);
     const fd = new FormData();
     fd.append("user_id", s.user_id); fd.append("product_id", productId); fd.append("product_qty", "1");
     try {
-      const r = await axios.post(`${API_BASE}/api-add-cart.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-cart.php", fd, { headers: { Authorization: `Bearer ${token}` } });
       if (r.data.flag === "1" || r.data.status === "1") {
         setAddedId(productId); setTimeout(() => setAddedId(null), 2000);
-      } else alert(r.data.message || "Could not add to cart.");
-    } catch(err) { console.error(err); } finally { setCartLoadingId(null); }
+      } else toast.error(r.data.message || "Could not add to cart.");
+    } catch (err) { console.error(err); } finally { setCartLoadingId(null); }
   };
 
   /* ── Apply all filters + sort ── */
@@ -407,10 +405,10 @@ function Product() {
 
     /* Sort */
     switch (filters.sort) {
-      case "price-asc":  result.sort((a,b) => parseFloat(a.product_price) - parseFloat(b.product_price)); break;
-      case "price-desc": result.sort((a,b) => parseFloat(b.product_price) - parseFloat(a.product_price)); break;
-      case "name-asc":   result.sort((a,b) => (a.product_name||"").localeCompare(b.product_name||"")); break;
-      case "name-desc":  result.sort((a,b) => (b.product_name||"").localeCompare(a.product_name||"")); break;
+      case "price-asc": result.sort((a, b) => parseFloat(a.product_price) - parseFloat(b.product_price)); break;
+      case "price-desc": result.sort((a, b) => parseFloat(b.product_price) - parseFloat(a.product_price)); break;
+      case "name-asc": result.sort((a, b) => (a.product_name || "").localeCompare(b.product_name || "")); break;
+      case "name-desc": result.sort((a, b) => (b.product_name || "").localeCompare(a.product_name || "")); break;
       default: break;
     }
 
@@ -429,7 +427,7 @@ function Product() {
 
   if (loading) return (
     <div className="d-flex flex-column align-items-center justify-content-center py-5 gap-3">
-      <div className="sz-spinner"/><span className="sz-muted">Loading products...</span>
+      <div className="sz-spinner" /><span className="sz-muted">Loading products...</span>
     </div>
   );
 
@@ -444,9 +442,11 @@ function Product() {
           <div className="sz-sec-sub">
             {filteredProducts.length} of {products.length} items
             {activeFilterCount > 0 && (
-              <span style={{ marginLeft: "8px", padding: "2px 8px", borderRadius: "99px",
+              <span style={{
+                marginLeft: "8px", padding: "2px 8px", borderRadius: "99px",
                 background: "rgba(99,102,241,0.12)", color: "var(--sz-accent)",
-                fontSize: "11px", fontWeight: 700 }}>
+                fontSize: "11px", fontWeight: 700
+              }}>
                 {activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""} active
               </span>
             )}
@@ -460,7 +460,7 @@ function Product() {
           style={{ fontSize: "13px", padding: "8px 16px", display: "flex", alignItems: "center", gap: "6px" }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
           </svg>
           Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
         </button>
@@ -539,7 +539,7 @@ function Product() {
                     style={{ animationDelay: `${Math.min(i * 30, 300)}ms` }}
                     onClick={() => navigate(`/product-details/${item.product_id}`)}>
                     <div className="sz-product-img">
-                      <img src={item.product_image} alt={item.product_name}/>
+                      <img src={item.product_image} alt={item.product_name} />
                       {addedId === item.product_id && (
                         <div style={{
                           position: "absolute", inset: 0,

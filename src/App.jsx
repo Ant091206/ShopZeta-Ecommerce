@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./Shopzeta.css";
 
 import Home from "./Home";
@@ -70,6 +72,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("userSession");
     setUserSession(null);
+    toast.info("You've been signed out. See you soon! 👋");
     navigate("/login");
   };
 
@@ -77,6 +80,7 @@ function App() {
     ? (userSession.user_name || "U").split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)
     : "";
 
+  /* ── Theme toggle (see inline styles in JSX) ── */
 
   return (
     <>
@@ -241,6 +245,21 @@ function App() {
         {showFooter && <Footer />}
       </div>
       <Chatbot />
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+        toastStyle={{
+          borderRadius: "12px",
+          fontFamily: "inherit",
+          fontSize: "13.5px",
+          fontWeight: 500,
+        }}
+      />
     </>
   );
 }

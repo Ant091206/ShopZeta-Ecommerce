@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
+import { toast } from "react-toastify";
 
 function ProductDetails({ userSession }) {
   const { productId } = useParams();
@@ -21,12 +19,12 @@ function ProductDetails({ userSession }) {
   const [revMsg, setRevMsg] = useState("");
   const [revSubmitting, setRevSubmitting] = useState(false);
   const navigate = useNavigate();
-  const token = API_TOKEN;
+  const token = "dbacace63c8bf2885869b81660c2b289";
 
   const fetchReviews = async () => {
     setRevLoading(true);
     try {
-      const r = await axios.get(`${API_BASE}/api-list-rating.php`, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await axios.get("http://akashsir.in/atproject/at-shop/api/api-list-rating.php", { headers: { Authorization: `Bearer ${token}` } });
       if (r.data?.rate_list) setReviews(r.data.rate_list.filter(rv => String(rv.product_id) === String(productId)));
       else setReviews([]);
     } catch (e) { console.error(e); } finally { setRevLoading(false); }
@@ -34,7 +32,7 @@ function ProductDetails({ userSession }) {
 
   useEffect(() => {
     if (!productId) return;
-    axios.get(`${API_BASE}/api-list-product.php?product_id=${productId}`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`http://akashsir.in/atproject/at-shop/api/api-list-product.php?product_id=${productId}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => { if (r.data.product_list) setProduct(r.data.product_list[0]); })
       .catch(console.error).finally(() => setLoading(false));
     fetchReviews();
@@ -42,38 +40,38 @@ function ProductDetails({ userSession }) {
 
   const addToCart = async () => {
     const s = userSession || JSON.parse(localStorage.getItem("userSession"));
-    if (!s?.user_id) { alert("Please login first."); navigate("/login"); return; }
+    if (!s?.user_id) { toast.warning("Please login first."); navigate("/login"); return; }
     setCartLoading(true);
     const fd = new FormData(); fd.append("user_id", s.user_id); fd.append("product_id", productId); fd.append("product_qty", "1");
     try {
-      const r = await axios.post(`${API_BASE}/api-add-cart.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-cart.php", fd, { headers: { Authorization: `Bearer ${token}` } });
       if (r.data.flag === "1" || r.data.status === "1") { setCartAdded(true); setTimeout(() => setCartAdded(false), 2500); }
-      else alert(r.data.message || "Could not add to cart.");
+      else toast.error(r.data.message || "Could not add to cart.");
     } catch (e) { console.error(e); } finally { setCartLoading(false); }
   };
 
   const addToWishlist = async () => {
     const s = userSession || JSON.parse(localStorage.getItem("userSession"));
-    if (!s?.user_id) { alert("Please login first."); navigate("/login"); return; }
+    if (!s?.user_id) { toast.warning("Please login first."); navigate("/login"); return; }
     setWishLoading(true);
     const fd = new FormData(); fd.append("user_id", s.user_id); fd.append("product_id", productId);
     try {
-      const r = await axios.post(`${API_BASE}/api-add-wishlist.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-wishlist.php", fd, { headers: { Authorization: `Bearer ${token}` } });
       if (r.data.flag === "1" || r.data.status === "1") { setWishAdded(true); setTimeout(() => setWishAdded(false), 2500); }
-      else alert(r.data.message || "Could not add to wishlist.");
+      else toast.error(r.data.message || "Could not add to wishlist.");
     } catch (e) { console.error(e); } finally { setWishLoading(false); }
   };
 
   const submitReview = async (e) => {
     e.preventDefault();
     const s = userSession || JSON.parse(localStorage.getItem("userSession"));
-    if (!s?.user_id) { alert("Please login first."); navigate("/login"); return; }
+    if (!s?.user_id) { toast.warning("Please login first."); navigate("/login"); return; }
     setRevSubmitting(true);
     const fd = new FormData();
     fd.append("product_id", productId); fd.append("user_id", s.user_id);
     fd.append("rating_number", revRate); fd.append("rating_name", revName); fd.append("rating_message", revMsg);
     try {
-      await axios.post(`${API_BASE}/api-add-rating.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-rating.php", fd, { headers: { Authorization: `Bearer ${token}` } });
       setRevName(""); setRevRate(""); setRevMsg(""); setShowForm(false); fetchReviews();
     } catch (e) { console.error(e); } finally { setRevSubmitting(false); }
   };

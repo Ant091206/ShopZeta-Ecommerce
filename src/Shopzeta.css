@@ -1571,3 +1571,41 @@ body {
         display: none !important;
     }
 }
+
+/* ════════════════════════════════════════
+   REACT TOASTIFY — theme integration
+════════════════════════════════════════ */
+.Toastify__toast {
+    font-family: 'Outfit', sans-serif !important;
+    border-radius: 12px !important;
+    box-shadow: var(--sz-shadow-lg) !important;
+}
+
+.Toastify__toast--success {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+}
+
+.Toastify__toast--error {
+    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+}
+
+.Toastify__toast--warning {
+    background: linear-gradient(135deg, #d97706, #f59e0b) !important;
+}
+
+.Toastify__toast--info {
+    background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+}
+
+.Toastify__progress-bar {
+    background: rgba(255, 255, 255, 0.5) !important;
+}
+
+.Toastify__close-button {
+    color: #fff !important;
+    opacity: 0.8 !important;
+}
+
+.Toastify__close-button:hover {
+    opacity: 1 !important;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Forgotpassword() {
   const [email, setEmail] = useState("");
@@ -11,13 +12,13 @@ function Forgotpassword() {
     e.preventDefault(); setLoading(true);
     const fd = new FormData(); fd.append("user_email", email);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-user-forgot-password.php`, fd, {
-        headers: { Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}` }
+      const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-user-forgot-password.php", fd, {
+        headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" }
       });
       if (res.data.flag === "1" || res.data.flag == 1) {
-        alert(`Your password: ${res.data.user_password || res.data.password}`);
+        toast.success(`Your password: ${res.data.user_password || res.data.password}`, { autoClose: 8000 });
         navigate("/login");
-      } else alert(res.data.message || "Email not found.");
+      } else toast.error(res.data.message || "Email not found.");
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   };
