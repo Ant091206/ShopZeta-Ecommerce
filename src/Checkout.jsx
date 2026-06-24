@@ -8,9 +8,13 @@ function Checkout() {
     const location = useLocation();
     const finalAmount = location.state?.amount || "0";
     const [userId, setUserId] = useState("");
-    const [formData, setFormData] = useState({ shipping_name: "", shipping_mobile: "", shipping_address: "", payment_method: "COD" });
+    const [formData, setFormData] = useState({
+        shipping_name: "", shipping_mobile: "", shipping_address: "", payment_method: "COD"
+    });
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+
+    const token = "dbacace63c8bf2885869b81660c2b289";
 
     useEffect(() => {
         const s = JSON.parse(localStorage.getItem("userSession"));
@@ -20,16 +24,18 @@ function Checkout() {
 
     const handleChange = (e) => setFormData(p => ({ ...p, [e.target.name]: e.target.value }));
 
-    /* ── Save order in your DB after successful payment ── */
+    /* ── Save order to DB after successful payment ── */
     const saveOrderToDB = async (paymentId) => {
         const fd = new FormData();
         fd.append("user_id", userId);
         Object.entries(formData).forEach(([k, v]) => fd.append(k, v));
         fd.append("payment_id", paymentId);
         fd.append("payment_status", "Paid");
-        await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-order.php", fd, {
-            headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" }
-        });
+        const res = await axios.post(
+            "http://akashsir.in/atproject/at-shop/api/api-add-order.php", fd,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        return res;
     };
 
     const handleSubmit = async (e) => {
@@ -38,36 +44,55 @@ function Checkout() {
             toast.warning("Please fill all shipping details."); return;
         }
 
-        /* ── COD: skip Razorpay, save directly ── */
+        /* ── COD: skip Razorpay ── */
         if (formData.payment_method === "COD") {
             setSubmitting(true);
             try {
                 await saveOrderToDB("COD");
+                toast.success("Order placed successfully! 🎉");
                 setSuccess(true);
-            } catch { toast.error("Something went wrong."); }
-            finally { setSubmitting(false); }
+            } catch (err) {
+                console.error(err);
+                toast.error("Something went wrong. Please try again.");
+            } finally { setSubmitting(false); }
             return;
         }
 
-        /* ── Card / UPI: go through Razorpay ── */
+        /* ── Card / UPI: Razorpay flow ── */
+
+        // Safety check — Razorpay script must be loaded
+        if (!window.Razorpay) {
+            toast.error("Payment gateway not loaded. Please refresh the page.");
+            return;
+        }
+
+        // Safety check — Key ID must be present
+        const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
+        if (!keyId) {
+            toast.error("Razorpay Key ID missing. Check your .env file.");
+            return;
+        }
+
         setSubmitting(true);
         try {
-            /* Step 1: Ask your backend to create a Razorpay order */
-            const fd = new FormData();
-            fd.append("amount", finalAmount);
+            /* Step 1 — Create Razorpay order via Vercel serverless function */
             const { data: rzpOrder } = await axios.post(
                 "/api/create-order",
-                { amount: finalAmount },
+                { amount: Number(finalAmount) },
                 { headers: { "Content-Type": "application/json" } }
             );
 
-            if (!rzpOrder.id) { toast.error("Could not initiate payment. Try again."); setSubmitting(false); return; }
+            if (!rzpOrder?.id) {
+                toast.error("Could not create payment order. Try again.");
+                setSubmitting(false);
+                return;
+            }
 
-            /* Step 2: Open Razorpay checkout popup */
+            /* Step 2 — Open Razorpay checkout popup */
             const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY_ID,   // rzp_test_XXXX from .env
+                key: keyId,
                 amount: rzpOrder.amount,
-                currency: rzpOrder.currency,
+                currency: rzpOrder.currency || "INR",
                 order_id: rzpOrder.id,
                 name: "ShopZeta",
                 description: "Order Payment",
@@ -78,17 +103,10 @@ function Checkout() {
                 },
                 theme: { color: "#6366f1" },
 
-                /* Step 3: Payment SUCCESS handler */
+                /* Step 3 — Payment SUCCESS */
                 handler: async (response) => {
-                    /* response contains:
-                       razorpay_payment_id, razorpay_order_id, razorpay_signature
-                       Send these to your backend to VERIFY the signature */
                     try {
-                        const vfd = new FormData();
-                        vfd.append("razorpay_payment_id", response.razorpay_payment_id);
-                        vfd.append("razorpay_order_id", response.razorpay_order_id);
-                        vfd.append("razorpay_signature", response.razorpay_signature);
-
+                        // Verify signature on backend
                         const { data: verify } = await axios.post(
                             "/api/verify-payment",
                             {
@@ -99,17 +117,22 @@ function Checkout() {
                             { headers: { "Content-Type": "application/json" } }
                         );
 
-                        if (verify.valid) {
+                        if (verify?.valid) {
                             await saveOrderToDB(response.razorpay_payment_id);
+                            toast.success("Payment successful! Order placed 🎉");
                             setSuccess(true);
                         } else {
-                            toast.error("Payment verification failed. Contact support.");
+                            toast.error("Payment verification failed. Please contact support.");
                         }
-                    } catch { toast.error("Error verifying payment."); }
-                    finally { setSubmitting(false); }
+                    } catch (err) {
+                        console.error("Verify error:", err);
+                        toast.error("Error verifying payment. Please contact support.");
+                    } finally {
+                        setSubmitting(false);
+                    }
                 },
 
-                /* Step 4: Payment FAILURE / modal close */
+                /* Step 4 — Modal dismissed (user closed popup) */
                 modal: {
                     ondismiss: () => {
                         setSubmitting(false);
@@ -119,25 +142,32 @@ function Checkout() {
             };
 
             const rzp = new window.Razorpay(options);
+
             rzp.on("payment.failed", (resp) => {
                 setSubmitting(false);
-                toast.error(`Payment failed: ${resp.error.description}`);
+                toast.error(`Payment failed: ${resp.error?.description || "Unknown error"}`);
             });
+
             rzp.open();
 
         } catch (err) {
-            console.error(err);
-            toast.error("Could not connect to payment gateway. Please try again.");
+            console.error("Checkout error:", err);
+            const msg = err?.response?.data?.error || err.message || "Unknown error";
+            toast.error(`Could not connect to payment gateway: ${msg}`);
             setSubmitting(false);
         }
     };
 
+    /* ── Success screen ── */
     if (success) return (
-        <div className="d-flex align-items-center justify-content-center px-3" style={{ minHeight: "calc(100vh - 68px)" }}>
+        <div className="d-flex align-items-center justify-content-center px-3"
+            style={{ minHeight: "calc(100vh - 68px)" }}>
             <div className="sz-auth-card p-5 text-center" style={{ maxWidth: "500px", width: "100%" }}>
                 <div className="sz-success-icon mb-4">✓</div>
                 <div className="sz-sec-title mb-2">Order Placed!</div>
-                <p className="sz-muted mb-4">Your order has been confirmed. We'll send you delivery updates.</p>
+                <p className="sz-muted mb-4">
+                    Your order has been confirmed. We'll send you delivery updates.
+                </p>
                 <div className="d-flex gap-2 justify-content-center">
                     <button className="sz-btn sz-btn-primary" onClick={() => navigate("/orders")}>View Orders</button>
                     <button className="sz-btn sz-btn-outline" onClick={() => navigate("/")}>Go Home</button>
@@ -146,7 +176,11 @@ function Checkout() {
         </div>
     );
 
-    const payMethods = [["COD", "💵", "Cash on Delivery"], ["Card", "💳", "Credit / Debit Card"], ["UPI", "📱", "UPI / Net Banking"]];
+    const payMethods = [
+        ["COD", "💵", "Cash on Delivery"],
+        ["Card", "💳", "Credit / Debit Card"],
+        ["UPI", "📱", "UPI / Net Banking"],
+    ];
 
     return (
         <div className="container-xl py-4 px-3 px-md-4" style={{ maxWidth: "640px" }}>
@@ -158,14 +192,17 @@ function Checkout() {
             {/* Amount bar */}
             <div className="sz-amt-bar d-flex justify-content-between align-items-center p-3 mb-4">
                 <div>
-                    <div className="sz-accent-c fw-bold" style={{ fontSize: "10px", letterSpacing: "1px", textTransform: "uppercase" }}>Order Total</div>
+                    <div className="sz-accent-c fw-bold"
+                        style={{ fontSize: "10px", letterSpacing: "1px", textTransform: "uppercase" }}>
+                        Order Total
+                    </div>
                     <div className="sz-text fw-bold" style={{ fontSize: "26px" }}>₹{finalAmount}</div>
                 </div>
                 <span style={{ fontSize: "28px" }}>🛍️</span>
             </div>
 
             <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-                {/* Shipping section */}
+                {/* Shipping */}
                 <div className="sz-ch-section p-4">
                     <div className="d-flex align-items-center gap-2 mb-4">
                         <div className="sz-step-badge">1</div>
@@ -174,20 +211,27 @@ function Checkout() {
                     <div className="d-flex flex-column gap-3">
                         <div>
                             <label className="sz-label">Full Name</label>
-                            <input className="sz-input" type="text" name="shipping_name" value={formData.shipping_name} onChange={handleChange} placeholder="Enter your full name" required />
+                            <input className="sz-input" type="text" name="shipping_name"
+                                value={formData.shipping_name} onChange={handleChange}
+                                placeholder="Enter your full name" required />
                         </div>
                         <div>
                             <label className="sz-label">Mobile Number</label>
-                            <input className="sz-input" type="tel" name="shipping_mobile" value={formData.shipping_mobile} onChange={handleChange} placeholder="10-digit mobile number" required />
+                            <input className="sz-input" type="tel" name="shipping_mobile"
+                                value={formData.shipping_mobile} onChange={handleChange}
+                                placeholder="10-digit mobile number" required />
                         </div>
                         <div>
                             <label className="sz-label">Delivery Address</label>
-                            <textarea className="sz-input" name="shipping_address" value={formData.shipping_address} onChange={handleChange} placeholder="House no., Street, Area, City, Pincode" rows="3" required style={{ resize: "none" }} />
+                            <textarea className="sz-input" name="shipping_address"
+                                value={formData.shipping_address} onChange={handleChange}
+                                placeholder="House no., Street, Area, City, Pincode"
+                                rows="3" required style={{ resize: "none" }} />
                         </div>
                     </div>
                 </div>
 
-                {/* Payment section */}
+                {/* Payment */}
                 <div className="sz-ch-section p-4">
                     <div className="d-flex align-items-center gap-2 mb-4">
                         <div className="sz-step-badge">2</div>
@@ -197,17 +241,37 @@ function Checkout() {
                         {payMethods.map(([val, icon, label]) => (
                             <div key={val} className="col-4">
                                 <label className={`sz-pay-opt d-block ${formData.payment_method === val ? "selected" : ""}`}>
-                                    <input type="radio" name="payment_method" value={val} checked={formData.payment_method === val} onChange={handleChange} className="d-none" />
+                                    <input type="radio" name="payment_method" value={val}
+                                        checked={formData.payment_method === val}
+                                        onChange={handleChange} className="d-none" />
                                     <div style={{ fontSize: "22px", marginBottom: "6px" }}>{icon}</div>
-                                    <div className={`fw-bold ${formData.payment_method === val ? "sz-accent-c" : "sz-muted"}`} style={{ fontSize: "11px" }}>{label}</div>
+                                    <div className={`fw-bold ${formData.payment_method === val ? "sz-accent-c" : "sz-muted"}`}
+                                        style={{ fontSize: "11px" }}>
+                                        {label}
+                                    </div>
                                 </label>
                             </div>
                         ))}
                     </div>
+
+                    {/* Razorpay test hint */}
+                    {formData.payment_method !== "COD" && (
+                        <div style={{
+                            marginTop: "12px", padding: "10px 12px",
+                            background: "rgba(99,102,241,0.07)",
+                            border: "1px solid rgba(99,102,241,0.2)",
+                            borderRadius: "8px", fontSize: "12px"
+                        }}>
+                            <span className="sz-accent-c fw-bold">Test card: </span>
+                            <span className="sz-muted">4111 1111 1111 1111 · Any expiry · Any CVV · OTP: 1234</span>
+                        </div>
+                    )}
                 </div>
 
-                <button type="submit" disabled={submitting} className="sz-btn sz-btn-primary w-100" style={{ padding: "15px", fontSize: "15px" }}>
-                    {submitting ? "Placing Order..." : `Place Order · ₹${finalAmount}`}
+                <button type="submit" disabled={submitting}
+                    className="sz-btn sz-btn-primary w-100"
+                    style={{ padding: "15px", fontSize: "15px" }}>
+                    {submitting ? "Processing..." : `Place Order · ₹${finalAmount}`}
                 </button>
             </form>
         </div>
