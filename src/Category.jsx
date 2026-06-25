@@ -2,17 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
-
 function CategoryList() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${API_BASE}/api-list-category.php`, {
-      headers: { Authorization: `Bearer ${API_TOKEN}` }
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api-list-category.php`, {
+      headers: { Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}` }
     }).then(r => { if (r.data.category_list) setCategories(r.data.category_list); })
       .catch(console.error).finally(() => setLoading(false));
   }, []);

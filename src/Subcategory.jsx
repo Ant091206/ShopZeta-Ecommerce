@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
-
 function SubCategoryList() {
   const { categoryId } = useParams();
   const [subCategories, setSubCategories] = useState([]);
@@ -12,8 +9,8 @@ function SubCategoryList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${API_BASE}/api-list-subcategory.php`, {
-      headers: { Authorization: `Bearer ${API_TOKEN}` }
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api-list-subcategory.php`, {
+      headers: { Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}` }
     }).then(r => { if (r.data.subcategory_list) setSubCategories(r.data.subcategory_list); })
       .catch(console.error).finally(() => setLoading(false));
   }, [categoryId]);

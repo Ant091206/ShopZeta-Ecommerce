@@ -14,7 +14,7 @@ function Checkout() {
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    const token = "dbacace63c8bf2885869b81660c2b289";
+    const token = import.meta.env.VITE_API_TOKEN;
 
     useEffect(() => {
         const s = JSON.parse(localStorage.getItem("userSession"));
@@ -32,7 +32,7 @@ function Checkout() {
         fd.append("payment_id", paymentId);
         fd.append("payment_status", "Paid");
         const res = await axios.post(
-            "http://akashsir.in/atproject/at-shop/api/api-add-order.php", fd,
+            `${import.meta.env.VITE_API_BASE_URL}/api-add-order.php`, fd,
             { headers: { Authorization: `Bearer ${token}` } }
         );
         return res;

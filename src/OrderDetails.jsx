@@ -2,21 +2,18 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
-
 function OrderDetails() {
     const { orderId } = useParams();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const token = API_TOKEN;
+    const token = import.meta.env.VITE_API_TOKEN;
 
     useEffect(() => {
         const s = JSON.parse(localStorage.getItem("userSession"));
         if (!orderId || !s?.user_id) { setLoading(false); return; }
         const fd = new FormData(); fd.append("user_id", s.user_id); fd.append("order_id", orderId);
-        axios.post(`${API_BASE}/api-list-order-detail.php`, fd, { headers: { Authorization: `Bearer ${token}` } })
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-list-order-detail.php`, fd, { headers: { Authorization: `Bearer ${token}` } })
             .then(r => setProducts(r.data?.order_detail_list || r.data?.order_details || (Array.isArray(r.data) ? r.data : [])))
             .catch(console.error).finally(() => setLoading(false));
     }, [orderId]);

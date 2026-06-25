@@ -19,12 +19,12 @@ function ProductDetails({ userSession }) {
   const [revMsg, setRevMsg] = useState("");
   const [revSubmitting, setRevSubmitting] = useState(false);
   const navigate = useNavigate();
-  const token = "dbacace63c8bf2885869b81660c2b289";
+  const token = import.meta.env.VITE_API_TOKEN;
 
   const fetchReviews = async () => {
     setRevLoading(true);
     try {
-      const r = await axios.get("http://akashsir.in/atproject/at-shop/api/api-list-rating.php", { headers: { Authorization: `Bearer ${token}` } });
+      const r = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api-list-rating.php`, { headers: { Authorization: `Bearer ${token}` } });
       if (r.data?.rate_list) setReviews(r.data.rate_list.filter(rv => String(rv.product_id) === String(productId)));
       else setReviews([]);
     } catch (e) { console.error(e); } finally { setRevLoading(false); }
@@ -32,7 +32,7 @@ function ProductDetails({ userSession }) {
 
   useEffect(() => {
     if (!productId) return;
-    axios.get(`http://akashsir.in/atproject/at-shop/api/api-list-product.php?product_id=${productId}`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api-list-product.php?product_id=${productId}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => { if (r.data.product_list) setProduct(r.data.product_list[0]); })
       .catch(console.error).finally(() => setLoading(false));
     fetchReviews();
@@ -44,7 +44,7 @@ function ProductDetails({ userSession }) {
     setCartLoading(true);
     const fd = new FormData(); fd.append("user_id", s.user_id); fd.append("product_id", productId); fd.append("product_qty", "1");
     try {
-      const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-cart.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-add-cart.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
       if (r.data.flag === "1" || r.data.status === "1") { setCartAdded(true); setTimeout(() => setCartAdded(false), 2500); }
       else toast.error(r.data.message || "Could not add to cart.");
     } catch (e) { console.error(e); } finally { setCartLoading(false); }
@@ -56,7 +56,7 @@ function ProductDetails({ userSession }) {
     setWishLoading(true);
     const fd = new FormData(); fd.append("user_id", s.user_id); fd.append("product_id", productId);
     try {
-      const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-wishlist.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-add-wishlist.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
       if (r.data.flag === "1" || r.data.status === "1") { setWishAdded(true); setTimeout(() => setWishAdded(false), 2500); }
       else toast.error(r.data.message || "Could not add to wishlist.");
     } catch (e) { console.error(e); } finally { setWishLoading(false); }
@@ -71,7 +71,7 @@ function ProductDetails({ userSession }) {
     fd.append("product_id", productId); fd.append("user_id", s.user_id);
     fd.append("rating_number", revRate); fd.append("rating_name", revName); fd.append("rating_message", revMsg);
     try {
-      await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-rating.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-add-rating.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
       setRevName(""); setRevRate(""); setRevMsg(""); setShowForm(false); fetchReviews();
     } catch (e) { console.error(e); } finally { setRevSubmitting(false); }
   };

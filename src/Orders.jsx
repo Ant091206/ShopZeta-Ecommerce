@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_TOKEN = import.meta.env.VITE_API_TOKEN;
-
 function Orders() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const token = API_TOKEN;
+    const token = import.meta.env.VITE_API_TOKEN;
 
     useEffect(() => {
         const s = JSON.parse(localStorage.getItem("userSession"));

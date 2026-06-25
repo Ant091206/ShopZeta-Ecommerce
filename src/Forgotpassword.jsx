@@ -12,8 +12,8 @@ function Forgotpassword() {
     e.preventDefault(); setLoading(true);
     const fd = new FormData(); fd.append("user_email", email);
     try {
-      const res = await axios.post("http://akashsir.in/atproject/at-shop/api/api-user-forgot-password.php", fd, {
-        headers: { Authorization: "Bearer dbacace63c8bf2885869b81660c2b289" }
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-user-forgot-password.php`, fd, {
+        headers: { Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}` }
       });
       if (res.data.flag === "1" || res.data.flag == 1) {
         toast.success(`Your password: ${res.data.user_password || res.data.password}`, { autoClose: 8000 });

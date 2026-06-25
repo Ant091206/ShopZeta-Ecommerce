@@ -352,12 +352,12 @@ function Product() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [sidebarOpen, setSidebarOpen] = useState(false); // mobile
   const navigate = useNavigate();
-  const token = "dbacace63c8bf2885869b81660c2b289";
+  const token = import.meta.env.VITE_API_TOKEN;
 
   useEffect(() => {
     setLoading(true);
     setFilters(DEFAULT_FILTERS);
-    let url = "http://akashsir.in/atproject/at-shop/api/api-list-product.php";
+    let url = `${import.meta.env.VITE_API_BASE_URL}/api-list-product.php`;
     if (subCategoryId) url += `?sub_category_id=${subCategoryId}`;
     axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => setProducts(r.data?.product_list || []))
@@ -372,7 +372,7 @@ function Product() {
     const fd = new FormData();
     fd.append("user_id", s.user_id); fd.append("product_id", productId); fd.append("product_qty", "1");
     try {
-      const r = await axios.post("http://akashsir.in/atproject/at-shop/api/api-add-cart.php", fd, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api-add-cart.php`, fd, { headers: { Authorization: `Bearer ${token}` } });
       if (r.data.flag === "1" || r.data.status === "1") {
         setAddedId(productId); setTimeout(() => setAddedId(null), 2000);
       } else toast.error(r.data.message || "Could not add to cart.");
