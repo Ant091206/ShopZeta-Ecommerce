@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import emailjs from "@emailjs/browser";
 
 function Checkout() {
     const navigate = useNavigate();
@@ -38,6 +39,33 @@ function Checkout() {
         return res;
     };
 
+    /* ── Send confirmation email via EmailJS ── */
+    const sendOrderEmail = async (orderData) => {
+        try {
+            const session = JSON.parse(localStorage.getItem("userSession"));
+            await emailjs.send(
+                import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                {
+                    customer_name: session?.user_name || "Customer",
+                    customer_email: session?.user_email || "",
+                    order_id: orderData.orderId || "N/A",
+                    amount: orderData.amount,
+                    payment_method: orderData.paymentMethod,
+                    address: formData.shipping_address,
+                    order_date: new Date().toLocaleDateString("en-IN", {
+                        day: "numeric", month: "long", year: "numeric"
+                    }),
+                },
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+            );
+            console.log("✓ Order confirmation email sent");
+        } catch (err) {
+            // Email failure should never block the order success flow
+            console.warn("Email send failed (non-critical):", err);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.shipping_name || !formData.shipping_mobile || !formData.shipping_address) {
@@ -48,8 +76,13 @@ function Checkout() {
         if (formData.payment_method === "COD") {
             setSubmitting(true);
             try {
-                await saveOrderToDB("COD");
-                toast.success("Order placed successfully! 🎉");
+                const codRes = await saveOrderToDB("COD");
+                await sendOrderEmail({
+                    orderId: codRes?.data?.order_id || "N/A",
+                    amount: finalAmount,
+                    paymentMethod: "Cash on Delivery",
+                });
+                toast.success("Order placed! Confirmation email sent 🎉");
                 setSuccess(true);
             } catch (err) {
                 console.error(err);
@@ -118,8 +151,13 @@ function Checkout() {
                         );
 
                         if (verify?.valid) {
-                            await saveOrderToDB(response.razorpay_payment_id);
-                            toast.success("Payment successful! Order placed 🎉");
+                            const rzpRes = await saveOrderToDB(response.razorpay_payment_id);
+                            await sendOrderEmail({
+                                orderId: rzpRes?.data?.order_id || response.razorpay_order_id,
+                                amount: finalAmount,
+                                paymentMethod: formData.payment_method === "UPI" ? "UPI / Net Banking" : "Credit / Debit Card",
+                            });
+                            toast.success("Payment successful! Confirmation email sent 🎉");
                             setSuccess(true);
                         } else {
                             toast.error("Payment verification failed. Please contact support.");
