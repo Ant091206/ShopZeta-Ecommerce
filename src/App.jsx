@@ -26,11 +26,11 @@ import Dashboard from "./Dashboard";
 import Chatbot from "./Chatbot";
 
 const NAV_LINKS = [
-  { name: "Home", path: "/", icon: "🏠" },
-  { name: "About", path: "/about", icon: "ℹ️" },
-  { name: "Categories", path: "/categories", icon: "⊞" },
-  { name: "Products", path: "/products", icon: "📦" },
-  { name: "Orders", path: "/orders", icon: "📋" },
+  { name: "Home",       path: "/",           icon: "🏠" },
+  { name: "About",      path: "/about",      icon: "ℹ️" },
+  { name: "Categories", path: "/categories", icon: "⊞"  },
+  { name: "Products",   path: "/products",   icon: "📦" },
+  { name: "Orders",     path: "/orders",     icon: "📋" },
 ];
 
 const NO_FOOTER = ["/login", "/signup", "/forgotpassword", "/otp-login"];
@@ -63,9 +63,9 @@ function App() {
 
   const toggleTheme = () => setIsDark(p => !p);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isActive = (path) => location.pathname === path;
+  const navigate   = useNavigate();
+  const location   = useLocation();
+  const isActive   = (path) => location.pathname === path;
   const showFooter = !NO_FOOTER.includes(location.pathname);
 
   const handleLoginSuccess = (userData) => { setUserSession(userData); navigate("/"); };
@@ -90,25 +90,40 @@ function App() {
       <nav className="sz-navbar d-flex align-items-center px-3 px-md-4 gap-3">
 
         {/* Brand */}
-        <div className="d-flex align-items-center gap-2 me-3"
-          style={{ cursor: "pointer", flexShrink: 0 }}
-          onClick={() => navigate("/")}>
-          <div className="sz-logo-ring">
-            <svg width="26" height="26" viewBox="0 0 36 36" fill="none"
-              style={{ position: "relative", zIndex: 1 }}>
-              <path d="M18 2 L31 9.5 L31 26.5 L18 34 L5 26.5 L5 9.5 Z"
-                fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" strokeWidth="0.8" />
-              <path d="M11 11 L25 11 L11 25 L25 25"
-                stroke="white" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              <circle cx="25" cy="11" r="2.2" fill="white" fillOpacity="0.95" />
-              <circle cx="11" cy="25" r="2.2" fill="white" fillOpacity="0.95" />
-              <circle cx="28" cy="8" r="1.2" fill="white" fillOpacity="0.5" />
-            </svg>
-          </div>
-          <div>
-            <div className="sz-brand-name">Shop<span>Zeta</span></div>
-            <span className="sz-tagline">Smart. Modern. Simple.</span>
-          </div>
+        <div style={{ cursor: "pointer", flexShrink: 0 }} onClick={() => navigate("/")}>
+          <svg width="200" height="48" viewBox="0 0 340 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lgA" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#7c3aed"/>
+                <stop offset="100%" stopColor="#ec4899"/>
+              </linearGradient>
+              <linearGradient id="lgB" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#7c3aed"/>
+                <stop offset="100%" stopColor="#ec4899"/>
+              </linearGradient>
+            </defs>
+            {/* Cart handle */}
+            <line x1="6" y1="12" x2="18" y2="12" stroke="url(#lgA)" strokeWidth="4" strokeLinecap="round"/>
+            <line x1="18" y1="12" x2="24" y2="30" stroke="url(#lgA)" strokeWidth="4" strokeLinecap="round"/>
+            {/* Cart body */}
+            <line x1="24" y1="30" x2="82" y2="30" stroke="url(#lgA)" strokeWidth="4" strokeLinecap="round"/>
+            <line x1="82" y1="30" x2="76" y2="56" stroke="url(#lgA)" strokeWidth="4" strokeLinecap="round"/>
+            <line x1="76" y1="56" x2="30" y2="56" stroke="url(#lgA)" strokeWidth="4" strokeLinecap="round"/>
+            <line x1="30" y1="56" x2="24" y2="30" stroke="url(#lgA)" strokeWidth="4" strokeLinecap="round"/>
+            {/* Cart wheels */}
+            <circle cx="40" cy="66" r="6" fill="url(#lgA)"/>
+            <circle cx="68" cy="66" r="6" fill="url(#lgA)"/>
+            {/* Z inside cart */}
+            <line x1="34" y1="38" x2="72" y2="38" stroke="url(#lgA)" strokeWidth="4" strokeLinecap="round"/>
+            <line x1="72" y1="38" x2="34" y2="52" stroke="url(#lgA)" strokeWidth="4" strokeLinecap="round"/>
+            <line x1="34" y1="52" x2="72" y2="52" stroke="url(#lgA)" strokeWidth="4" strokeLinecap="round"/>
+            {/* Shop text */}
+            <text x="94" y="52" fontFamily="Outfit,system-ui,sans-serif" fontWeight="800" fontSize="36" fill="var(--sz-text)" letterSpacing="-0.5">Shop</text>
+            {/* Zeta text gradient */}
+            <text x="192" y="52" fontFamily="Outfit,system-ui,sans-serif" fontWeight="800" fontSize="36" fill="url(#lgB)" letterSpacing="-0.5">Zeta</text>
+            {/* Tagline */}
+            <text x="94" y="68" fontFamily="Outfit,system-ui,sans-serif" fontWeight="600" fontSize="8.5" fill="var(--sz-muted)" letterSpacing="2.5">SMART. MODERN. SIMPLE.</text>
+          </svg>
         </div>
 
         {/* Center nav links */}
@@ -184,7 +199,7 @@ function App() {
             <svg width="17" height="17" viewBox="0 0 24 24"
               fill={isActive("/wishlist") ? "currentColor" : "none"}
               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
             </svg>
           </Link>
 
@@ -194,8 +209,8 @@ function App() {
             title="Cart">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
             </svg>
             <span className="sz-badge-dot">!</span>
           </Link>
@@ -222,24 +237,24 @@ function App() {
       {/* ── MAIN CONTENT ── */}
       <div className="sz-main">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/categories" element={<CategoryList />} />
-          <Route path="/subcategories" element={<SubCategoryList />} />
-          <Route path="/products" element={<Product />} />
-          <Route path="/subcategories/:categoryId" element={<SubCategoryList />} />
+          <Route path="/"                                    element={<Home />} />
+          <Route path="/about"                               element={<AboutUs />} />
+          <Route path="/categories"                          element={<CategoryList />} />
+          <Route path="/subcategories"                       element={<SubCategoryList />} />
+          <Route path="/products"                            element={<Product />} />
+          <Route path="/subcategories/:categoryId"           element={<SubCategoryList />} />
           <Route path="/products/subcategory/:subCategoryId" element={<Product />} />
-          <Route path="/product-details/:productId" element={<ProductDetails userSession={userSession} />} />
-          <Route path="/wishlist" element={<Wishlist userSession={userSession} />} />
-          <Route path="/cart" element={<Cart userSession={userSession} />} />
-          <Route path="/dashboard" element={<Dashboard userSession={userSession} />} />
-          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-          <Route path="/otp-login" element={<OtpLogin setUserSession={setUserSession} />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgotpassword" element={<Forgotpassword />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/order-details/:orderId" element={<OrderDetails />} />
+          <Route path="/product-details/:productId"          element={<ProductDetails userSession={userSession} />} />
+          <Route path="/wishlist"                            element={<Wishlist userSession={userSession} />} />
+          <Route path="/cart"                                element={<Cart userSession={userSession} />} />
+          <Route path="/dashboard"                           element={<Dashboard userSession={userSession} />} />
+          <Route path="/login"                               element={<Login onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="/otp-login"                           element={<OtpLogin setUserSession={setUserSession} />} />
+          <Route path="/signup"                              element={<Signup />} />
+          <Route path="/forgotpassword"                      element={<Forgotpassword />} />
+          <Route path="/checkout"                            element={<Checkout />} />
+          <Route path="/orders"                              element={<Orders />} />
+          <Route path="/order-details/:orderId"              element={<OrderDetails />} />
         </Routes>
 
         {showFooter && <Footer />}
