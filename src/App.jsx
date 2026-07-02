@@ -233,16 +233,33 @@ function App() {
 
         {showFooter && <Footer isDark={isDark} />}
       </div>
-      {/* WhatsApp floating button */}
+      {/* WhatsApp floating button — left side, with bounce animation */}
+      <style>{`
+        @keyframes wa-bounce {
+          0%, 100% { transform: translateY(0); }
+          25%       { transform: translateY(-8px); }
+          50%       { transform: translateY(-4px); }
+          75%       { transform: translateY(-10px); }
+        }
+        .wa-btn {
+          animation: wa-bounce 2.8s ease-in-out infinite;
+        }
+        .wa-btn:hover {
+          animation: none !important;
+          transform: scale(1.12) !important;
+          box-shadow: 0 6px 24px rgba(37,211,102,0.65) !important;
+        }
+      `}</style>
       <a
         href="https://wa.me/918128468593?text=Hi%2C%20I%20need%20help%20with%20my%20ShopZeta%20order!"
         target="_blank"
         rel="noopener noreferrer"
         title="Chat on WhatsApp"
+        className="wa-btn"
         style={{
           position: "fixed",
-          bottom: "90px",
-          right: "20px",
+          bottom: "24px",
+          left: "20px",
           width: "52px",
           height: "52px",
           borderRadius: "50%",
@@ -255,16 +272,7 @@ function App() {
           transition: "transform 200ms cubic-bezier(0.34,1.56,0.64,1), box-shadow 200ms ease",
           textDecoration: "none",
         }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = "scale(1.12)";
-          e.currentTarget.style.boxShadow = "0 6px 24px rgba(37,211,102,0.6)";
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = "scale(1)";
-          e.currentTarget.style.boxShadow = "0 4px 16px rgba(37,211,102,0.45)";
-        }}
       >
-        {/* WhatsApp SVG icon */}
         <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.668 4.61 1.832 6.504L4 29l7.698-1.807A11.94 11.94 0 0016 27c6.627 0 12-5.373 12-12S22.627 3 16 3z" fill="#fff"/>
           <path d="M16 5.5c-5.238 0-9.5 4.262-9.5 9.5 0 2.09.68 4.02 1.832 5.59l-.96 3.54 3.66-.96A9.46 9.46 0 0016 24.5c5.238 0 9.5-4.262 9.5-9.5S21.238 5.5 16 5.5z" fill="#25D366"/>
