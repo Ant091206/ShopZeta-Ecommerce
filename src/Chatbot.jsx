@@ -180,7 +180,12 @@ function Chatbot() {
                 onMouseLeave={e => e.currentTarget.style.transform = isOpen ? "scale(0.9)" : "scale(1)"}
                 title={isOpen ? "Close chat" : "Open ShopBot"}
             >
-                {isOpen ? "✕" : "🤖"}
+                {isOpen ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg> : <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.15)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="8.5" cy="11.5" r="1.25" fill="white" />
+                    <circle cx="12" cy="11.5" r="1.25" fill="white" />
+                    <circle cx="15.5" cy="11.5" r="1.25" fill="white" />
+                </svg>}
             </button>
 
             {/* Pulse ring animation */}
@@ -221,13 +226,20 @@ function Chatbot() {
                             width: "36px", height: "36px", borderRadius: "50%",
                             background: "rgba(255,255,255,0.15)",
                             display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: "18px", flexShrink: 0,
-                        }}>🤖</div>
+                            flexShrink: 0,
+                        }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.2)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <circle cx="8.5" cy="11.5" r="1.25" fill="white" />
+                                <circle cx="12" cy="11.5" r="1.25" fill="white" />
+                                <circle cx="15.5" cy="11.5" r="1.25" fill="white" />
+                            </svg>
+                        </div>
                         <div style={{ flex: 1 }}>
                             <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff" }}>ShopBot</div>
                             <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", gap: "4px" }}>
                                 <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block" }} />
-                                Powered by Gemini AI
+                                Powered by Groq AI
                             </div>
                         </div>
                         <div style={{ display: "flex", gap: "6px" }}>
@@ -269,8 +281,15 @@ function Chatbot() {
                                                 width: "28px", height: "28px", borderRadius: "50%",
                                                 background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
                                                 display: "flex", alignItems: "center", justifyContent: "center",
-                                                fontSize: "13px", flexShrink: 0,
-                                            }}>🤖</div>
+                                                flexShrink: 0,
+                                            }}>
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.2)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                    <circle cx="8.5" cy="11.5" r="1.25" fill="white" />
+                                                    <circle cx="12" cy="11.5" r="1.25" fill="white" />
+                                                    <circle cx="15.5" cy="11.5" r="1.25" fill="white" />
+                                                </svg>
+                                            </div>
                                         )}
                                         <div style={{ maxWidth: "76%", display: "flex", flexDirection: "column", gap: "3px", alignItems: msg.role === "user" ? "flex-end" : "flex-start" }}>
                                             <div style={{
@@ -297,7 +316,14 @@ function Chatbot() {
                                 {/* Loading indicator */}
                                 {loading && (
                                     <div style={{ display: "flex", alignItems: "flex-end", gap: "8px" }}>
-                                        <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", flexShrink: 0 }}>🤖</div>
+                                        <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.2)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                <circle cx="8.5" cy="11.5" r="1.25" fill="white" />
+                                                <circle cx="12" cy="11.5" r="1.25" fill="white" />
+                                                <circle cx="15.5" cy="11.5" r="1.25" fill="white" />
+                                            </svg>
+                                        </div>
                                         <div style={{
                                             padding: "12px 16px",
                                             background: "var(--sz-surface2, #16161f)",
