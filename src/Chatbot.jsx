@@ -162,42 +162,55 @@ function Chatbot() {
 
     return (
         <>
-            {/* ── Floating Button ── */}
+            {/* ── Floating Button — Zap + Chat premium ── */}
+            <style>{`
+        @keyframes fab-pulse {
+          0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(99,102,241,0.6), 0 6px 24px rgba(99,102,241,0.4); }
+          50%  { transform: scale(1.04); box-shadow: 0 0 0 10px rgba(99,102,241,0), 0 6px 24px rgba(99,102,241,0.4); }
+          100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(99,102,241,0), 0 6px 24px rgba(99,102,241,0.4); }
+        }
+        .chat-fab-btn { animation: fab-pulse 2.5s ease-out infinite; }
+        .chat-fab-btn:hover {
+          animation: none !important;
+          transform: scale(1.13) !important;
+          box-shadow: 0 8px 36px rgba(99,102,241,0.75) !important;
+        }
+        .chat-fab-btn:active { transform: scale(0.96) !important; }
+      `}</style>
             <button
                 onClick={() => { setIsOpen(p => !p); setIsMinimized(false); }}
+                className={isOpen ? "" : "chat-fab-btn"}
+                title={isOpen ? "Close chat" : "Chat with ShopBot"}
                 style={{
                     position: "fixed", bottom: "24px", right: "24px", zIndex: 9999,
                     width: "58px", height: "58px", borderRadius: "50%",
-                    background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-                    border: "none", cursor: "pointer",
-                    boxShadow: "0 4px 20px rgba(99,102,241,0.55), 0 0 0 4px rgba(99,102,241,0.15)",
+                    background: "linear-gradient(145deg, #4338ca 0%, #6366f1 45%, #a855f7 100%)",
+                    border: "2px solid rgba(255,255,255,0.2)",
+                    cursor: "pointer", outline: "none",
+                    boxShadow: isOpen
+                        ? "0 4px 16px rgba(99,102,241,0.4)"
+                        : "0 6px 24px rgba(99,102,241,0.45)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "24px",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                    transform: isOpen ? "scale(0.9)" : "scale(1)",
+                    transition: "transform 220ms cubic-bezier(0.34,1.56,0.64,1), box-shadow 220ms ease",
+                    transform: isOpen ? "scale(0.92) rotate(90deg)" : "scale(1) rotate(0deg)",
                 }}
-                onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
-                onMouseLeave={e => e.currentTarget.style.transform = isOpen ? "scale(0.9)" : "scale(1)"}
-                title={isOpen ? "Close chat" : "Open ShopBot"}
             >
-                {isOpen ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg> : <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.15)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    <circle cx="8.5" cy="11.5" r="1.25" fill="white" />
-                    <circle cx="12" cy="11.5" r="1.25" fill="white" />
-                    <circle cx="15.5" cy="11.5" r="1.25" fill="white" />
-                </svg>}
+                {isOpen
+                    ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                    : <svg width="27" height="27" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        {/* Chat bubble background */}
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+                            fill="rgba(255,255,255,0.15)" stroke="white" strokeWidth="1.4"
+                            strokeLinecap="round" strokeLinejoin="round" />
+                        {/* Zap bolt inside */}
+                        <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z"
+                            fill="white" />
+                    </svg>
+                }
             </button>
-
-            {/* Pulse ring animation */}
-            {!isOpen && (
-                <div style={{
-                    position: "fixed", bottom: "24px", right: "24px", zIndex: 9998,
-                    width: "58px", height: "58px", borderRadius: "50%",
-                    border: "2px solid rgba(99,102,241,0.4)",
-                    animation: "chatbot-pulse 2s ease-in-out infinite",
-                    pointerEvents: "none",
-                }} />
-            )}
 
             {/* ── Chat Window ── */}
             {isOpen && (
