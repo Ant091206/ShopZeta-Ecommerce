@@ -28,10 +28,11 @@ import Dashboard from "./Dashboard";
 import Chatbot from "./Chatbot";
 import ContactUs from "./Contactus";
 
+
 const NAV_LINKS = [
   { name: "Home",       path: "/",           icon: "🏠" },
   { name: "About",      path: "/about",      icon: "ℹ️" },
-  { name: "Contact",    path: "/contactus",  icon: "✉️" },
+  { name: "Contact Us",    path: "/contactus",  icon: "✉️" },
   { name: "Categories", path: "/categories", icon: "⊞"  },
   { name: "Products",   path: "/products",   icon: "📦" },
   { name: "Orders",     path: "/orders",     icon: "📋" },
@@ -93,13 +94,60 @@ function App() {
       {/* ── NAVBAR ── */}
       <nav className="sz-navbar d-flex align-items-center px-3 px-md-4 gap-3">
 
-        {/* Brand */}
-        <div style={{ cursor: "pointer", flexShrink: 0 }} onClick={() => navigate("/")}>
-          <img
-            src={isDark ? logoDark : logoLight}
-            alt="ShopZeta"
-            style={{ height: "44px", width: "auto", display: "block", objectFit: "contain" }}
-          />
+        {/* Brand — inline SVG, zero background, always transparent */}
+        <div style={{ cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", gap: "10px" }}
+          onClick={() => navigate("/")}>
+
+          {/* Cart + Z icon */}
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="cgrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#7c3aed"/>
+                <stop offset="100%" stopColor="#db2777"/>
+              </linearGradient>
+            </defs>
+            {/* Handle */}
+            <path d="M4 6 L8 6 L12 22" stroke="url(#cgrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            {/* Cart body */}
+            <path d="M12 22 L30 22 L28 30 L14 30 Z" stroke="url(#cgrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            {/* Top rail */}
+            <line x1="13" y1="14" x2="31" y2="14" stroke="url(#cgrad)" strokeWidth="2.5" strokeLinecap="round"/>
+            <line x1="31" y1="14" x2="30" y2="22" stroke="url(#cgrad)" strokeWidth="2.5" strokeLinecap="round"/>
+            {/* Z inside cart */}
+            <line x1="16" y1="16" x2="26" y2="16" stroke="url(#cgrad)" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="26" y1="16" x2="16" y2="21" stroke="url(#cgrad)" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="16" y1="21" x2="26" y2="21" stroke="url(#cgrad)" strokeWidth="2" strokeLinecap="round"/>
+            {/* Wheels */}
+            <circle cx="16" cy="33" r="2.5" fill="url(#cgrad)"/>
+            <circle cx="26" cy="33" r="2.5" fill="url(#cgrad)"/>
+          </svg>
+
+          {/* Text */}
+          <div>
+            <div style={{
+              fontFamily: "Outfit, sans-serif",
+              fontWeight: 800,
+              fontSize: "20px",
+              letterSpacing: "-0.5px",
+              lineHeight: 1,
+              color: isDark ? "#ffffff" : "#111118",
+              display: "flex", alignItems: "baseline", gap: "0px",
+            }}>
+              <span>Shop</span>
+              <span style={{
+                background: "linear-gradient(135deg, #7c3aed, #db2777)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>Zeta</span>
+            </div>
+            <div style={{
+              fontFamily: "Outfit, sans-serif",
+              fontSize: "7px", fontWeight: 600,
+              letterSpacing: "2px", textTransform: "uppercase",
+              color: "var(--sz-muted)", marginTop: "2px",
+            }}>Smart. Modern. Simple.</div>
+          </div>
         </div>
 
         {/* Center nav links */}
