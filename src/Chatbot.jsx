@@ -162,52 +162,78 @@ function Chatbot() {
 
     return (
         <>
-            {/* ── Floating Button — Zap + Chat premium ── */}
+            {/* ── Floating Button — Support Agent Squircle ── */}
             <style>{`
-        @keyframes fab-pulse {
-          0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(99,102,241,0.6), 0 6px 24px rgba(99,102,241,0.4); }
-          50%  { transform: scale(1.04); box-shadow: 0 0 0 10px rgba(99,102,241,0), 0 6px 24px rgba(99,102,241,0.4); }
-          100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(99,102,241,0), 0 6px 24px rgba(99,102,241,0.4); }
+        @keyframes support-pulse {
+          0%   { box-shadow: 0 6px 24px rgba(76,175,80,0.5), 0 0 0 0 rgba(76,175,80,0.4); }
+          60%  { box-shadow: 0 6px 24px rgba(76,175,80,0.5), 0 0 0 10px rgba(76,175,80,0); }
+          100% { box-shadow: 0 6px 24px rgba(76,175,80,0.5), 0 0 0 0 rgba(76,175,80,0); }
         }
-        .chat-fab-btn { animation: fab-pulse 2.5s ease-out infinite; }
-        .chat-fab-btn:hover {
+        @keyframes support-float {
+          0%, 100% { transform: translateY(0px); }
+          50%       { transform: translateY(-4px); }
+        }
+        .support-fab {
+          animation: support-pulse 2.5s ease-out infinite, support-float 3.5s ease-in-out infinite;
+        }
+        .support-fab:hover {
           animation: none !important;
-          transform: scale(1.13) !important;
-          box-shadow: 0 8px 36px rgba(99,102,241,0.75) !important;
+          transform: translateY(-3px) scale(1.08) !important;
+          box-shadow: 0 10px 36px rgba(76,175,80,0.7) !important;
         }
-        .chat-fab-btn:active { transform: scale(0.96) !important; }
+        .support-fab:active { transform: scale(0.95) !important; }
+        .support-close {
+          width: 58px !important; height: 58px !important;
+          border-radius: 50% !important;
+          background: #e53935 !important;
+          box-shadow: 0 4px 16px rgba(229,57,53,0.5) !important;
+        }
+        .support-close:hover { transform: scale(1.08) !important; box-shadow: 0 8px 28px rgba(229,57,53,0.6) !important; }
       `}</style>
             <button
                 onClick={() => { setIsOpen(p => !p); setIsMinimized(false); }}
-                className={isOpen ? "" : "chat-fab-btn"}
-                title={isOpen ? "Close chat" : "Chat with ShopBot"}
+                className={isOpen ? "support-close" : "support-fab"}
+                title={isOpen ? "Close chat" : "Chat with Support"}
                 style={{
-                    position: "fixed", bottom: "24px", right: "24px", zIndex: 9999,
-                    width: "58px", height: "58px", borderRadius: "50%",
-                    background: "linear-gradient(145deg, #4338ca 0%, #6366f1 45%, #a855f7 100%)",
-                    border: "2px solid rgba(255,255,255,0.2)",
+                    position: "fixed", bottom: "28px", right: "24px", zIndex: 9999,
+                    width: "62px", height: "62px",
+                    borderRadius: isOpen ? "50%" : "20px",
+                    background: isOpen ? "#e53935" : "linear-gradient(145deg, #66bb6a, #43a047, #2e7d32)",
+                    border: isOpen ? "none" : "3px solid #81c784",
                     cursor: "pointer", outline: "none",
-                    boxShadow: isOpen
-                        ? "0 4px 16px rgba(99,102,241,0.4)"
-                        : "0 6px 24px rgba(99,102,241,0.45)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    transition: "transform 220ms cubic-bezier(0.34,1.56,0.64,1), box-shadow 220ms ease",
-                    transform: isOpen ? "scale(0.92) rotate(90deg)" : "scale(1) rotate(0deg)",
+                    boxShadow: isOpen
+                        ? "0 4px 16px rgba(229,57,53,0.5)"
+                        : "0 6px 24px rgba(76,175,80,0.5), inset 0 1px 0 rgba(255,255,255,0.2)",
+                    transition: "all 280ms cubic-bezier(0.34,1.56,0.64,1)",
+                    padding: 0,
                 }}
             >
                 {isOpen
-                    ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                    ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
-                    : <svg width="27" height="27" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        {/* Chat bubble background */}
-                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
-                            fill="rgba(255,255,255,0.15)" stroke="white" strokeWidth="1.4"
-                            strokeLinecap="round" strokeLinejoin="round" />
-                        {/* Zap bolt inside */}
-                        <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z"
-                            fill="white" />
+                    : /* Support agent icon — robot face + headset */
+                    <svg width="38" height="38" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        {/* Headset band over top */}
+                        <path d="M16 28 C16 16 48 16 48 28" stroke="white" strokeWidth="4" strokeLinecap="round" fill="none" />
+                        {/* Left ear cup */}
+                        <rect x="10" y="26" width="10" height="14" rx="5" fill="white" />
+                        {/* Right ear cup */}
+                        <rect x="44" y="26" width="10" height="14" rx="5" fill="white" />
+                        {/* Face / chat bubble */}
+                        <rect x="18" y="24" width="28" height="24" rx="10" fill="white" />
+                        {/* Chat bubble tail */}
+                        <path d="M28 48 L24 54 L34 48Z" fill="white" />
+                        {/* Left eye */}
+                        <circle cx="25" cy="35" r="3" fill="#2e7d32" />
+                        {/* Right eye */}
+                        <circle cx="39" cy="35" r="3" fill="#2e7d32" />
+                        {/* Mic arm */}
+                        <path d="M44 33 Q52 33 52 40" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
+                        {/* Mic dot */}
+                        <circle cx="52" cy="41" r="2.5" fill="white" />
                     </svg>
                 }
             </button>
