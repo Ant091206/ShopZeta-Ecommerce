@@ -31,7 +31,7 @@ import ContactUs from "./Contactus";
 const NAV_LINKS = [
   { name: "Home",       path: "/",           icon: "🏠" },
   { name: "About",      path: "/about",      icon: "ℹ️" },
-  { name: "Contact Us", path: "/contactus", icon: "✉️" },
+  { name: "Contact",    path: "/contactus",  icon: "✉️" },
   { name: "Categories", path: "/categories", icon: "⊞"  },
   { name: "Products",   path: "/products",   icon: "📦" },
   { name: "Orders",     path: "/orders",     icon: "📋" },
@@ -215,6 +215,7 @@ function App() {
         <Routes>
           <Route path="/"                                    element={<Home />} />
           <Route path="/about"                               element={<AboutUs />} />
+          <Route path="/contactus"                           element={<ContactUs />} />
           <Route path="/categories"                          element={<CategoryList />} />
           <Route path="/subcategories"                       element={<SubCategoryList />} />
           <Route path="/products"                            element={<Product />} />
