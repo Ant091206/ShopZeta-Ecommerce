@@ -165,9 +165,9 @@ function Chatbot() {
             {/* ── Floating Button — Support Agent Squircle ── */}
             <style>{`
         @keyframes support-pulse {
-          0%   { box-shadow: 0 6px 24px rgba(76,175,80,0.5), 0 0 0 0 rgba(76,175,80,0.4); }
-          60%  { box-shadow: 0 6px 24px rgba(76,175,80,0.5), 0 0 0 10px rgba(76,175,80,0); }
-          100% { box-shadow: 0 6px 24px rgba(76,175,80,0.5), 0 0 0 0 rgba(76,175,80,0); }
+          0%   { box-shadow: 0 6px 24px rgba(99,102,241,0.55), 0 0 0 0 rgba(99,102,241,0.4); }
+          60%  { box-shadow: 0 6px 24px rgba(99,102,241,0.55), 0 0 0 10px rgba(99,102,241,0); }
+          100% { box-shadow: 0 6px 24px rgba(99,102,241,0.55), 0 0 0 0 rgba(99,102,241,0); }
         }
         @keyframes support-float {
           0%, 100% { transform: translateY(0px); }
@@ -179,16 +179,16 @@ function Chatbot() {
         .support-fab:hover {
           animation: none !important;
           transform: translateY(-3px) scale(1.08) !important;
-          box-shadow: 0 10px 36px rgba(76,175,80,0.7) !important;
+          box-shadow: 0 10px 36px rgba(99,102,241,0.75) !important;
         }
         .support-fab:active { transform: scale(0.95) !important; }
         .support-close {
           width: 58px !important; height: 58px !important;
           border-radius: 50% !important;
-          background: #e53935 !important;
-          box-shadow: 0 4px 16px rgba(229,57,53,0.5) !important;
+          background: #dc2626 !important;
+          box-shadow: 0 4px 16px rgba(220,38,38,0.5) !important;
         }
-        .support-close:hover { transform: scale(1.08) !important; box-shadow: 0 8px 28px rgba(229,57,53,0.6) !important; }
+        .support-close:hover { transform: scale(1.08) !important; box-shadow: 0 8px 28px rgba(220,38,38,0.6) !important; }
       `}</style>
             <button
                 onClick={() => { setIsOpen(p => !p); setIsMinimized(false); }}
@@ -198,13 +198,13 @@ function Chatbot() {
                     position: "fixed", bottom: "28px", right: "24px", zIndex: 9999,
                     width: "62px", height: "62px",
                     borderRadius: isOpen ? "50%" : "20px",
-                    background: isOpen ? "#e53935" : "linear-gradient(145deg, #66bb6a, #43a047, #2e7d32)",
-                    border: isOpen ? "none" : "3px solid #81c784",
+                    background: isOpen ? "#dc2626" : "linear-gradient(145deg, #4f46e5, #6366f1, #8b5cf6)",
+                    border: isOpen ? "none" : "2.5px solid rgba(255,255,255,0.2)",
                     cursor: "pointer", outline: "none",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     boxShadow: isOpen
-                        ? "0 4px 16px rgba(229,57,53,0.5)"
-                        : "0 6px 24px rgba(76,175,80,0.5), inset 0 1px 0 rgba(255,255,255,0.2)",
+                        ? "0 4px 16px rgba(220,38,38,0.5)"
+                        : "0 6px 28px rgba(99,102,241,0.55), inset 0 1px 0 rgba(255,255,255,0.2)",
                     transition: "all 280ms cubic-bezier(0.34,1.56,0.64,1)",
                     padding: 0,
                 }}
@@ -214,26 +214,28 @@ function Chatbot() {
                         <line x1="18" y1="6" x2="6" y2="18" />
                         <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
-                    : /* Support agent icon — robot face + headset */
+                    : /* Support agent icon — robot face + headset, purple theme */
                     <svg width="38" height="38" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                         {/* Headset band over top */}
-                        <path d="M16 28 C16 16 48 16 48 28" stroke="white" strokeWidth="4" strokeLinecap="round" fill="none" />
+                        <path d="M16 28 C16 16 48 16 48 28" stroke="rgba(255,255,255,0.9)" strokeWidth="4" strokeLinecap="round" fill="none" />
                         {/* Left ear cup */}
-                        <rect x="10" y="26" width="10" height="14" rx="5" fill="white" />
+                        <rect x="10" y="26" width="10" height="14" rx="5" fill="rgba(255,255,255,0.9)" />
                         {/* Right ear cup */}
-                        <rect x="44" y="26" width="10" height="14" rx="5" fill="white" />
-                        {/* Face / chat bubble */}
-                        <rect x="18" y="24" width="28" height="24" rx="10" fill="white" />
+                        <rect x="44" y="26" width="10" height="14" rx="5" fill="rgba(255,255,255,0.9)" />
+                        {/* Face / chat bubble — semi-transparent white */}
+                        <rect x="18" y="22" width="28" height="26" rx="10" fill="rgba(255,255,255,0.95)" />
                         {/* Chat bubble tail */}
-                        <path d="M28 48 L24 54 L34 48Z" fill="white" />
-                        {/* Left eye */}
-                        <circle cx="25" cy="35" r="3" fill="#2e7d32" />
-                        {/* Right eye */}
-                        <circle cx="39" cy="35" r="3" fill="#2e7d32" />
+                        <path d="M27 48 L23 55 L33 48Z" fill="rgba(255,255,255,0.95)" />
+                        {/* Left eye — purple */}
+                        <circle cx="25" cy="34" r="3.2" fill="#6366f1" />
+                        {/* Right eye — purple */}
+                        <circle cx="39" cy="34" r="3.2" fill="#6366f1" />
+                        {/* Smile */}
+                        <path d="M26 40 Q32 44 38 40" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" fill="none" />
                         {/* Mic arm */}
-                        <path d="M44 33 Q52 33 52 40" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" />
+                        <path d="M46 32 Q54 32 54 40" stroke="rgba(255,255,255,0.9)" strokeWidth="3" strokeLinecap="round" fill="none" />
                         {/* Mic dot */}
-                        <circle cx="52" cy="41" r="2.5" fill="white" />
+                        <circle cx="54" cy="41" r="2.5" fill="rgba(255,255,255,0.9)" />
                     </svg>
                 }
             </button>
