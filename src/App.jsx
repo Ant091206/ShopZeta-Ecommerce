@@ -26,10 +26,12 @@ import OtpLogin from "./OtpLogin";
 import Footer from "./Footer";
 import Dashboard from "./Dashboard";
 import Chatbot from "./Chatbot";
+import ContactUs from "./Contactus";
 
 const NAV_LINKS = [
   { name: "Home",       path: "/",           icon: "🏠" },
   { name: "About",      path: "/about",      icon: "ℹ️" },
+  { name: "Contact Us", path: "/contactus", icon: "✉️" },
   { name: "Categories", path: "/categories", icon: "⊞"  },
   { name: "Products",   path: "/products",   icon: "📦" },
   { name: "Orders",     path: "/orders",     icon: "📋" },
@@ -251,7 +253,7 @@ function App() {
         }
       `}</style>
       <a
-        href="https://wa.me/918128468593?text=Hi%2C%20I%20need%20help%20with%20my%20ShopZeta%20order!"
+        href="https://wa.me/91XXXXXXXXXX?text=Hi%2C%20I%20need%20help%20with%20my%20ShopZeta%20order!"
         target="_blank"
         rel="noopener noreferrer"
         title="Chat on WhatsApp"
