@@ -5,8 +5,6 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Shopzeta.css";
-import logoLight from "./assets/shopzeta-logo-light.svg";
-import logoDark from "./assets/shopzeta-logo-dark.svg";
 
 import Home from "./Home";
 import CategoryList from "./Category";
@@ -93,19 +91,58 @@ function App() {
       {/* ── NAVBAR ── */}
       <nav className="sz-navbar d-flex align-items-center px-3 px-md-4 gap-3">
 
-        {/* Brand */}
+        {/* Brand — 3D extruded Z logo */}
         <div className="d-flex align-items-center gap-2 me-3"
           style={{ cursor: "pointer", flexShrink: 0 }}
           onClick={() => navigate("/")}>
-          <div className="sz-logo-ring">
-            <svg width="26" height="26" viewBox="0 0 36 36" fill="none"
-              style={{ position: "relative", zIndex: 1 }}>
-              <path d="M11 11 L25 11 L11 25 L25 25"
-                stroke="white" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              <circle cx="25" cy="11" r="2.2" fill="white" fillOpacity="0.95" />
-              <circle cx="11" cy="25" r="2.2" fill="white" fillOpacity="0.95" />
-            </svg>
-          </div>
+          <svg width="44" height="44" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg"
+            style={{ filter: "drop-shadow(0 4px 12px rgba(99,102,241,0.5))" }}>
+            <defs>
+              <linearGradient id="lf" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#818cf8" />
+                <stop offset="100%" stopColor="#6366f1" />
+              </linearGradient>
+              <linearGradient id="lt" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#a5b4fc" />
+                <stop offset="100%" stopColor="#818cf8" />
+              </linearGradient>
+              <linearGradient id="ls" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#3730a3" />
+                <stop offset="100%" stopColor="#4338ca" />
+              </linearGradient>
+              <linearGradient id="lsh" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="white" stopOpacity="0.3" />
+                <stop offset="60%" stopColor="white" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {/* Shadow */}
+            <ellipse cx="80" cy="128" rx="52" ry="8" fill="#1e1b4b" opacity="0.35" />
+            {/* Right side */}
+            <polygon points="110,30 128,14 128,110 110,126" fill="url(#ls)" />
+            {/* Bottom side */}
+            <polygon points="20,126 110,126 128,110 38,110" fill="#312e81" />
+            {/* Front face */}
+            <rect x="20" y="14" width="90" height="96" rx="2" fill="url(#lf)" />
+            {/* Top side */}
+            <polygon points="20,14 110,14 128,0 38,0" fill="url(#lt)" />
+            {/* Z right side depth — top bar */}
+            <polygon points="72,38 80,32 80,48 72,54" fill="#3730a3" />
+            {/* Z right side depth — diagonal */}
+            <polygon points="72,54 80,48 48,86 40,92" fill="#312e81" />
+            {/* Z right side depth — bottom bar */}
+            <polygon points="48,86 80,80 80,96 48,100" fill="#3730a3" />
+            {/* Z front face */}
+            <path d="M30 38 L72 38 L30 86 L72 86"
+              stroke="white" strokeWidth="11" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
+            {/* Shine */}
+            <rect x="20" y="14" width="90" height="96" rx="2" fill="url(#lsh)" />
+            {/* Top highlight */}
+            <line x1="20" y1="14" x2="110" y2="14" stroke="white" strokeWidth="1.5" opacity="0.55" />
+            <line x1="20" y1="14" x2="38" y2="0" stroke="white" strokeWidth="1" opacity="0.35" />
+            {/* Corner dots */}
+            <circle cx="20" cy="14" r="2" fill="white" opacity="0.7" />
+            <circle cx="110" cy="14" r="2" fill="white" opacity="0.4" />
+          </svg>
           <div>
             <div className="sz-brand-name">Shop<span>Zeta</span></div>
             <span className="sz-tagline">Smart. Modern. Simple.</span>
