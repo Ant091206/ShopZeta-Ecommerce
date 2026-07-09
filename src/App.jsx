@@ -28,14 +28,13 @@ import Dashboard from "./Dashboard";
 import Chatbot from "./Chatbot";
 import ContactUs from "./Contactus";
 
-
 const NAV_LINKS = [
-  { name: "Home",       path: "/",           icon: "🏠" },
-  { name: "About",      path: "/about",      icon: "ℹ️" },
-  { name: "Contact Us",    path: "/contactus",  icon: "✉️" },
-  { name: "Categories", path: "/categories", icon: "⊞"  },
-  { name: "Products",   path: "/products",   icon: "📦" },
-  { name: "Orders",     path: "/orders",     icon: "📋" },
+  { name: "Home", path: "/", icon: "🏠" },
+  { name: "About", path: "/about", icon: "ℹ️" },
+  { name: "Contact", path: "/contactus", icon: "✉️" },
+  { name: "Categories", path: "/categories", icon: "⊞" },
+  { name: "Products", path: "/products", icon: "📦" },
+  { name: "Orders", path: "/orders", icon: "📋" },
 ];
 
 const NO_FOOTER = ["/login", "/signup", "/forgotpassword", "/otp-login"];
@@ -68,9 +67,9 @@ function App() {
 
   const toggleTheme = () => setIsDark(p => !p);
 
-  const navigate   = useNavigate();
-  const location   = useLocation();
-  const isActive   = (path) => location.pathname === path;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
   const showFooter = !NO_FOOTER.includes(location.pathname);
 
   const handleLoginSuccess = (userData) => { setUserSession(userData); navigate("/"); };
@@ -94,59 +93,38 @@ function App() {
       {/* ── NAVBAR ── */}
       <nav className="sz-navbar d-flex align-items-center px-3 px-md-4 gap-3">
 
-        {/* Brand — inline SVG, zero background, always transparent */}
+        {/* Brand */}
         <div style={{ cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", gap: "10px" }}
           onClick={() => navigate("/")}>
-
-          {/* Cart + Z icon */}
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="cgrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7c3aed"/>
-                <stop offset="100%" stopColor="#db2777"/>
+                <stop offset="0%" stopColor="#7c3aed" />
+                <stop offset="100%" stopColor="#db2777" />
               </linearGradient>
             </defs>
             {/* Handle */}
-            <path d="M4 6 L8 6 L12 22" stroke="url(#cgrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            {/* Cart body */}
-            <path d="M12 22 L30 22 L28 30 L14 30 Z" stroke="url(#cgrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            {/* Top rail */}
-            <line x1="13" y1="14" x2="31" y2="14" stroke="url(#cgrad)" strokeWidth="2.5" strokeLinecap="round"/>
-            <line x1="31" y1="14" x2="30" y2="22" stroke="url(#cgrad)" strokeWidth="2.5" strokeLinecap="round"/>
+            <path d="M4 6 L8 6 L12 23" stroke="url(#cgrad)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            {/* Cart top rail */}
+            <line x1="12" y1="14" x2="33" y2="14" stroke="url(#cgrad)" strokeWidth="2.6" strokeLinecap="round" />
+            {/* Cart right side */}
+            <line x1="33" y1="14" x2="31" y2="23" stroke="url(#cgrad)" strokeWidth="2.6" strokeLinecap="round" />
+            {/* Cart bottom */}
+            <line x1="12" y1="23" x2="31" y2="23" stroke="url(#cgrad)" strokeWidth="2.6" strokeLinecap="round" />
             {/* Z inside cart */}
-            <line x1="16" y1="16" x2="26" y2="16" stroke="url(#cgrad)" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="26" y1="16" x2="16" y2="21" stroke="url(#cgrad)" strokeWidth="2" strokeLinecap="round"/>
-            <line x1="16" y1="21" x2="26" y2="21" stroke="url(#cgrad)" strokeWidth="2" strokeLinecap="round"/>
+            <line x1="16" y1="16.5" x2="28" y2="16.5" stroke="url(#cgrad)" strokeWidth="2.2" strokeLinecap="round" />
+            <line x1="28" y1="16.5" x2="16" y2="21.5" stroke="url(#cgrad)" strokeWidth="2.2" strokeLinecap="round" />
+            <line x1="16" y1="21.5" x2="28" y2="21.5" stroke="url(#cgrad)" strokeWidth="2.2" strokeLinecap="round" />
             {/* Wheels */}
-            <circle cx="16" cy="33" r="2.5" fill="url(#cgrad)"/>
-            <circle cx="26" cy="33" r="2.5" fill="url(#cgrad)"/>
+            <circle cx="17" cy="28" r="3" fill="url(#cgrad)" />
+            <circle cx="28" cy="28" r="3" fill="url(#cgrad)" />
           </svg>
-
-          {/* Text */}
           <div>
-            <div style={{
-              fontFamily: "Outfit, sans-serif",
-              fontWeight: 800,
-              fontSize: "20px",
-              letterSpacing: "-0.5px",
-              lineHeight: 1,
-              color: isDark ? "#ffffff" : "#111118",
-              display: "flex", alignItems: "baseline", gap: "0px",
-            }}>
-              <span>Shop</span>
-              <span style={{
-                background: "linear-gradient(135deg, #7c3aed, #db2777)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>Zeta</span>
+            <div style={{ fontFamily: "Outfit,sans-serif", fontWeight: 800, fontSize: "20px", letterSpacing: "-0.5px", lineHeight: 1, display: "flex" }}>
+              <span style={{ color: isDark ? "#ffffff" : "#111118" }}>Shop</span>
+              <span style={{ background: "linear-gradient(135deg,#7c3aed,#db2777)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Zeta</span>
             </div>
-            <div style={{
-              fontFamily: "Outfit, sans-serif",
-              fontSize: "7px", fontWeight: 600,
-              letterSpacing: "2px", textTransform: "uppercase",
-              color: "var(--sz-muted)", marginTop: "2px",
-            }}>Smart. Modern. Simple.</div>
+            <div style={{ fontFamily: "Outfit,sans-serif", fontSize: "7px", fontWeight: 600, letterSpacing: "2.5px", textTransform: "uppercase", color: "var(--sz-muted)", marginTop: "3px" }}>Smart. Modern. Simple.</div>
           </div>
         </div>
 
@@ -223,7 +201,7 @@ function App() {
             <svg width="17" height="17" viewBox="0 0 24 24"
               fill={isActive("/wishlist") ? "currentColor" : "none"}
               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
             </svg>
           </Link>
 
@@ -233,8 +211,8 @@ function App() {
             title="Cart">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+              <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
             </svg>
             <span className="sz-badge-dot">!</span>
           </Link>
@@ -261,25 +239,25 @@ function App() {
       {/* ── MAIN CONTENT ── */}
       <div className="sz-main">
         <Routes>
-          <Route path="/"                                    element={<Home />} />
-          <Route path="/about"                               element={<AboutUs />} />
-          <Route path="/contactus"                           element={<ContactUs />} />
-          <Route path="/categories"                          element={<CategoryList />} />
-          <Route path="/subcategories"                       element={<SubCategoryList />} />
-          <Route path="/products"                            element={<Product />} />
-          <Route path="/subcategories/:categoryId"           element={<SubCategoryList />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contactus" element={<ContactUs />} />
+          <Route path="/categories" element={<CategoryList />} />
+          <Route path="/subcategories" element={<SubCategoryList />} />
+          <Route path="/products" element={<Product />} />
+          <Route path="/subcategories/:categoryId" element={<SubCategoryList />} />
           <Route path="/products/subcategory/:subCategoryId" element={<Product />} />
-          <Route path="/product-details/:productId"          element={<ProductDetails userSession={userSession} />} />
-          <Route path="/wishlist"                            element={<Wishlist userSession={userSession} />} />
-          <Route path="/cart"                                element={<Cart userSession={userSession} />} />
-          <Route path="/dashboard"                           element={<Dashboard userSession={userSession} />} />
-          <Route path="/login"                               element={<Login onLoginSuccess={handleLoginSuccess} />} />
-          <Route path="/otp-login"                           element={<OtpLogin setUserSession={setUserSession} />} />
-          <Route path="/signup"                              element={<Signup />} />
-          <Route path="/forgotpassword"                      element={<Forgotpassword />} />
-          <Route path="/checkout"                            element={<Checkout />} />
-          <Route path="/orders"                              element={<Orders />} />
-          <Route path="/order-details/:orderId"              element={<OrderDetails />} />
+          <Route path="/product-details/:productId" element={<ProductDetails userSession={userSession} />} />
+          <Route path="/wishlist" element={<Wishlist userSession={userSession} />} />
+          <Route path="/cart" element={<Cart userSession={userSession} />} />
+          <Route path="/dashboard" element={<Dashboard userSession={userSession} />} />
+          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="/otp-login" element={<OtpLogin setUserSession={setUserSession} />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgotpassword" element={<Forgotpassword />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/order-details/:orderId" element={<OrderDetails />} />
         </Routes>
 
         {showFooter && <Footer isDark={isDark} />}
@@ -325,9 +303,9 @@ function App() {
         }}
       >
         <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.668 4.61 1.832 6.504L4 29l7.698-1.807A11.94 11.94 0 0016 27c6.627 0 12-5.373 12-12S22.627 3 16 3z" fill="#fff"/>
-          <path d="M16 5.5c-5.238 0-9.5 4.262-9.5 9.5 0 2.09.68 4.02 1.832 5.59l-.96 3.54 3.66-.96A9.46 9.46 0 0016 24.5c5.238 0 9.5-4.262 9.5-9.5S21.238 5.5 16 5.5z" fill="#25D366"/>
-          <path d="M21.5 18.72c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.09 3.2 5.08 4.36.71.27 1.26.43 1.69.55.71.2 1.36.17 1.87.1.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#fff"/>
+          <path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.668 4.61 1.832 6.504L4 29l7.698-1.807A11.94 11.94 0 0016 27c6.627 0 12-5.373 12-12S22.627 3 16 3z" fill="#fff" />
+          <path d="M16 5.5c-5.238 0-9.5 4.262-9.5 9.5 0 2.09.68 4.02 1.832 5.59l-.96 3.54 3.66-.96A9.46 9.46 0 0016 24.5c5.238 0 9.5-4.262 9.5-9.5S21.238 5.5 16 5.5z" fill="#25D366" />
+          <path d="M21.5 18.72c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.09 3.2 5.08 4.36.71.27 1.26.43 1.69.55.71.2 1.36.17 1.87.1.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#fff" />
         </svg>
       </a>
 
