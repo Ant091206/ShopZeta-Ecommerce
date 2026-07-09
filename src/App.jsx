@@ -94,37 +94,21 @@ function App() {
       <nav className="sz-navbar d-flex align-items-center px-3 px-md-4 gap-3">
 
         {/* Brand */}
-        <div style={{ cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", gap: "10px" }}
+        <div className="d-flex align-items-center gap-2 me-3"
+          style={{ cursor: "pointer", flexShrink: 0 }}
           onClick={() => navigate("/")}>
-          <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="cgrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7c3aed" />
-                <stop offset="100%" stopColor="#db2777" />
-              </linearGradient>
-            </defs>
-            {/* Handle */}
-            <path d="M4 6 L8 6 L12 23" stroke="url(#cgrad)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            {/* Cart top rail */}
-            <line x1="12" y1="14" x2="33" y2="14" stroke="url(#cgrad)" strokeWidth="2.6" strokeLinecap="round" />
-            {/* Cart right side */}
-            <line x1="33" y1="14" x2="31" y2="23" stroke="url(#cgrad)" strokeWidth="2.6" strokeLinecap="round" />
-            {/* Cart bottom */}
-            <line x1="12" y1="23" x2="31" y2="23" stroke="url(#cgrad)" strokeWidth="2.6" strokeLinecap="round" />
-            {/* Z inside cart */}
-            <line x1="16" y1="16.5" x2="28" y2="16.5" stroke="url(#cgrad)" strokeWidth="2.2" strokeLinecap="round" />
-            <line x1="28" y1="16.5" x2="16" y2="21.5" stroke="url(#cgrad)" strokeWidth="2.2" strokeLinecap="round" />
-            <line x1="16" y1="21.5" x2="28" y2="21.5" stroke="url(#cgrad)" strokeWidth="2.2" strokeLinecap="round" />
-            {/* Wheels */}
-            <circle cx="17" cy="28" r="3" fill="url(#cgrad)" />
-            <circle cx="28" cy="28" r="3" fill="url(#cgrad)" />
-          </svg>
+          <div className="sz-logo-ring">
+            <svg width="26" height="26" viewBox="0 0 36 36" fill="none"
+              style={{ position: "relative", zIndex: 1 }}>
+              <path d="M11 11 L25 11 L11 25 L25 25"
+                stroke="white" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <circle cx="25" cy="11" r="2.2" fill="white" fillOpacity="0.95" />
+              <circle cx="11" cy="25" r="2.2" fill="white" fillOpacity="0.95" />
+            </svg>
+          </div>
           <div>
-            <div style={{ fontFamily: "Outfit,sans-serif", fontWeight: 800, fontSize: "20px", letterSpacing: "-0.5px", lineHeight: 1, display: "flex" }}>
-              <span style={{ color: isDark ? "#ffffff" : "#111118" }}>Shop</span>
-              <span style={{ background: "linear-gradient(135deg,#7c3aed,#db2777)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Zeta</span>
-            </div>
-            <div style={{ fontFamily: "Outfit,sans-serif", fontSize: "7px", fontWeight: 600, letterSpacing: "2.5px", textTransform: "uppercase", color: "var(--sz-muted)", marginTop: "3px" }}>Smart. Modern. Simple.</div>
+            <div className="sz-brand-name">Shop<span>Zeta</span></div>
+            <span className="sz-tagline">Smart. Modern. Simple.</span>
           </div>
         </div>
 
