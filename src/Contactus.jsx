@@ -25,9 +25,9 @@ function ContactUs() {
     const socials = [
         {
             name: "LinkedIn",
-            handle: "your-linkedin-handle",
+            handle: "Aryan Thakkar",
             desc: "Connect with me professionally",
-            href: "https://linkedin.com/in/your-linkedin-handle",
+            href: "https://www.linkedin.com/in/aryan-thakkar-126a76345/",
             color: "#0A66C2",
             glow: "rgba(10,102,194,0.3)",
             icon: (
@@ -39,9 +39,9 @@ function ContactUs() {
         },
         {
             name: "GitHub",
-            handle: "your-github-username",
+            handle: "Aryan Thakkar",
             desc: "Check out my projects & code",
-            href: "https://github.com/your-github-username",
+            href: "https://github.com/Ant091206",
             color: "#333",
             glow: "rgba(100,100,100,0.3)",
             icon: (
@@ -55,9 +55,9 @@ function ContactUs() {
         },
         {
             name: "Gmail",
-            handle: "yourname@gmail.com",
+            handle: "aaryanthakkar06@gmail.com",
             desc: "Drop me an email anytime",
-            href: "mailto:yourname@gmail.com",
+            href: "mailto:aaryanthakkar06@gmail.com",
             color: "#EA4335",
             glow: "rgba(234,67,53,0.3)",
             icon: (

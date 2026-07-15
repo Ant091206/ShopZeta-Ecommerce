@@ -29,7 +29,7 @@ import ContactUs from "./Contactus";
 const NAV_LINKS = [
   { name: "Home", path: "/", icon: "🏠" },
   { name: "About", path: "/about", icon: "ℹ️" },
-  { name: "Contact", path: "/contactus", icon: "✉️" },
+  { name: "Contact Us", path: "/contactus", icon: "✉️" },
   { name: "Categories", path: "/categories", icon: "⊞" },
   { name: "Products", path: "/products", icon: "📦" },
   { name: "Orders", path: "/orders", icon: "📋" },
