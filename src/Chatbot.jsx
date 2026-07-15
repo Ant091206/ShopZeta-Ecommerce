@@ -19,155 +19,155 @@ Never make up product prices or stock availability.
 Always stay on-topic about shopping and ShopZeta.`;
 
 function Chatbot() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState([
-        {
+  const [isOpen, setIsOpen]     = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      role: "bot",
+      text: "👋 Hey there! I'm **ShopBot**, your ShopZeta assistant. How can I help you today?\n\nYou can ask me about orders, products, shipping, returns, or anything else! 🛍️",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    }
+  ]);
+  const [input, setInput]       = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const messagesEndRef           = useRef(null);
+  const inputRef                 = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && !isMinimized) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isOpen, isMinimized]);
+
+  useEffect(() => {
+    if (isOpen && !isMinimized) {
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [isOpen, isMinimized]);
+
+  const sendMessage = async () => {
+    const trimmed = input.trim();
+    if (!trimmed || loading) return;
+
+    const userMsg = {
+      role: "user",
+      text: trimmed,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+
+    setMessages(prev => [...prev, userMsg]);
+    setInput("");
+    setLoading(true);
+
+    try {
+      // Build Groq messages array (OpenAI-compatible)
+      const groqMessages = [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...messages.map(m => ({
+          role: m.role === "user" ? "user" : "assistant",
+          content: m.text,
+        })),
+        { role: "user", content: trimmed },
+      ];
+
+      const res = await fetch(GROQ_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${GROQ_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: groqMessages,
+          temperature: 0.7,
+          max_tokens: 400,
+          stream: false,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const msg = data?.error?.message || "";
+        const isRate = res.status === 429 || msg.toLowerCase().includes("rate");
+        if (isRate) {
+          setMessages(prev => [...prev, {
             role: "bot",
-            text: "👋 Hey there! I'm **ShopBot**, your ShopZeta assistant. How can I help you today?\n\nYou can ask me about orders, products, shipping, returns, or anything else! 🛍️",
+            text: "⏳ **Rate limit reached!** Groq's free tier allows 30 requests/min.\n\nPlease wait a moment and try again. 🙏",
             time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            isError: true,
+          }]);
+          setLoading(false);
+          return;
         }
-    ]);
-    const [input, setInput] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [isMinimized, setIsMinimized] = useState(false);
-    const messagesEndRef = useRef(null);
-    const inputRef = useRef(null);
+        throw new Error(msg || `HTTP ${res.status}`);
+      }
 
-    useEffect(() => {
-        if (isOpen && !isMinimized) {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        }
-    }, [messages, isOpen, isMinimized]);
+      const botText =
+        data?.choices?.[0]?.message?.content ||
+        "Sorry, I couldn't get a response. Please try again! 🙏";
 
-    useEffect(() => {
-        if (isOpen && !isMinimized) {
-            setTimeout(() => inputRef.current?.focus(), 100);
-        }
-    }, [isOpen, isMinimized]);
+      setMessages(prev => [...prev, {
+        role: "bot",
+        text: botText,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      }]);
+    } catch (err) {
+      console.error("Gemini error:", err);
+      const isRateLimit = err.message?.includes("429") || err.message?.toLowerCase().includes("quota");
+      setMessages(prev => [...prev, {
+        role: "bot",
+        text: isRateLimit
+          ? "⏳ **Rate limit reached!** The free Gemini API allows 15 requests/min and 1,500/day. Please wait a moment and try again! 🙏"
+          : "⚠️ Something went wrong. Please check your `VITE_GROQ_API_KEY` in `.env` and try again.",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        isError: true,
+      }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const sendMessage = async () => {
-        const trimmed = input.trim();
-        if (!trimmed || loading) return;
+  const handleKey = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
 
-        const userMsg = {
-            role: "user",
-            text: trimmed,
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        };
+  const clearChat = () => {
+    setMessages([{
+      role: "bot",
+      text: "👋 Chat cleared! How can I help you today? 🛍️",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    }]);
+  };
 
-        setMessages(prev => [...prev, userMsg]);
-        setInput("");
-        setLoading(true);
+  /* ── Render markdown-like bold (**text**) ── */
+  const renderText = (text) => {
+    const parts = text.split(/\*\*(.*?)\*\*/g);
+    return parts.map((part, i) =>
+      i % 2 === 1
+        ? <strong key={i} style={{ fontWeight: 700 }}>{part}</strong>
+        : part
+    );
+  };
 
-        try {
-            // Build Groq messages array (OpenAI-compatible)
-            const groqMessages = [
-                { role: "system", content: SYSTEM_PROMPT },
-                ...messages.map(m => ({
-                    role: m.role === "user" ? "user" : "assistant",
-                    content: m.text,
-                })),
-                { role: "user", content: trimmed },
-            ];
+  const quickReplies = [
+    "Track my order 📦",
+    "Return policy ↩️",
+    "Best deals 🔥",
+    "Contact support 🎧",
+  ];
 
-            const res = await fetch(GROQ_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${GROQ_API_KEY}`,
-                },
-                body: JSON.stringify({
-                    model: "llama-3.3-70b-versatile",
-                    messages: groqMessages,
-                    temperature: 0.7,
-                    max_tokens: 400,
-                    stream: false,
-                }),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                const msg = data?.error?.message || "";
-                const isRate = res.status === 429 || msg.toLowerCase().includes("rate");
-                if (isRate) {
-                    setMessages(prev => [...prev, {
-                        role: "bot",
-                        text: "⏳ **Rate limit reached!** Groq's free tier allows 30 requests/min.\n\nPlease wait a moment and try again. 🙏",
-                        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                        isError: true,
-                    }]);
-                    setLoading(false);
-                    return;
-                }
-                throw new Error(msg || `HTTP ${res.status}`);
-            }
-
-            const botText =
-                data?.choices?.[0]?.message?.content ||
-                "Sorry, I couldn't get a response. Please try again! 🙏";
-
-            setMessages(prev => [...prev, {
-                role: "bot",
-                text: botText,
-                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            }]);
-        } catch (err) {
-            console.error("Gemini error:", err);
-            const isRateLimit = err.message?.includes("429") || err.message?.toLowerCase().includes("quota");
-            setMessages(prev => [...prev, {
-                role: "bot",
-                text: isRateLimit
-                    ? "⏳ **Rate limit reached!** The free Gemini API allows 15 requests/min and 1,500/day. Please wait a moment and try again! 🙏"
-                    : "⚠️ Something went wrong. Please check your `VITE_GROQ_API_KEY` in `.env` and try again.",
-                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                isError: true,
-            }]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleKey = (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    };
-
-    const clearChat = () => {
-        setMessages([{
-            role: "bot",
-            text: "👋 Chat cleared! How can I help you today? 🛍️",
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        }]);
-    };
-
-    /* ── Render markdown-like bold (**text**) ── */
-    const renderText = (text) => {
-        const parts = text.split(/\*\*(.*?)\*\*/g);
-        return parts.map((part, i) =>
-            i % 2 === 1
-                ? <strong key={i} style={{ fontWeight: 700 }}>{part}</strong>
-                : part
-        );
-    };
-
-    const quickReplies = [
-        "Track my order 📦",
-        "Return policy ↩️",
-        "Best deals 🔥",
-        "Contact support 🎧",
-    ];
-
-    return (
-        <>
-            {/* ── Floating Button — Support Agent Squircle ── */}
-            <style>{`
+  return (
+    <>
+      {/* ── Floating Button — Support Agent Squircle ── */}
+      <style>{`
         @keyframes support-pulse {
-          0%   { box-shadow: 0 6px 24px rgba(99,102,241,0.55), 0 0 0 0 rgba(99,102,241,0.4); }
-          60%  { box-shadow: 0 6px 24px rgba(99,102,241,0.55), 0 0 0 10px rgba(99,102,241,0); }
-          100% { box-shadow: 0 6px 24px rgba(99,102,241,0.55), 0 0 0 0 rgba(99,102,241,0); }
+          0%   { box-shadow: 0 6px 24px rgba(99,102,241,0.3), 0 0 0 0 rgba(99,102,241,0.35); }
+          60%  { box-shadow: 0 6px 24px rgba(99,102,241,0.3), 0 0 0 10px rgba(99,102,241,0); }
+          100% { box-shadow: 0 6px 24px rgba(99,102,241,0.3), 0 0 0 0 rgba(99,102,241,0); }
         }
         @keyframes support-float {
           0%, 100% { transform: translateY(0px); }
@@ -179,7 +179,7 @@ function Chatbot() {
         .support-fab:hover {
           animation: none !important;
           transform: translateY(-3px) scale(1.08) !important;
-          box-shadow: 0 10px 36px rgba(99,102,241,0.75) !important;
+          box-shadow: 0 10px 36px rgba(99,102,241,0.4) !important;
         }
         .support-fab:active { transform: scale(0.95) !important; }
         .support-close {
@@ -190,268 +190,275 @@ function Chatbot() {
         }
         .support-close:hover { transform: scale(1.08) !important; box-shadow: 0 8px 28px rgba(220,38,38,0.6) !important; }
       `}</style>
-            <button
-                onClick={() => { setIsOpen(p => !p); setIsMinimized(false); }}
-                className={isOpen ? "support-close" : "support-fab"}
-                title={isOpen ? "Close chat" : "Chat with Support"}
-                style={{
-                    position: "fixed", bottom: "28px", right: "24px", zIndex: 9999,
-                    width: "62px", height: "62px",
-                    borderRadius: isOpen ? "50%" : "20px",
-                    background: isOpen ? "#dc2626" : "linear-gradient(145deg, #4f46e5, #6366f1, #8b5cf6)",
-                    border: isOpen ? "none" : "2.5px solid rgba(255,255,255,0.2)",
-                    cursor: "pointer", outline: "none",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    boxShadow: isOpen
-                        ? "0 4px 16px rgba(220,38,38,0.5)"
-                        : "0 6px 28px rgba(99,102,241,0.55), inset 0 1px 0 rgba(255,255,255,0.2)",
-                    transition: "all 280ms cubic-bezier(0.34,1.56,0.64,1)",
-                    padding: 0,
-                }}
-            >
-                {isOpen
-                    ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                    : /* Support agent icon — robot face + headset, purple theme */
-                    <svg width="38" height="38" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        {/* Headset band over top */}
-                        <path d="M16 28 C16 16 48 16 48 28" stroke="rgba(255,255,255,0.9)" strokeWidth="4" strokeLinecap="round" fill="none" />
-                        {/* Left ear cup */}
-                        <rect x="10" y="26" width="10" height="14" rx="5" fill="rgba(255,255,255,0.9)" />
-                        {/* Right ear cup */}
-                        <rect x="44" y="26" width="10" height="14" rx="5" fill="rgba(255,255,255,0.9)" />
-                        {/* Face / chat bubble — semi-transparent white */}
-                        <rect x="18" y="22" width="28" height="26" rx="10" fill="rgba(255,255,255,0.95)" />
-                        {/* Chat bubble tail */}
-                        <path d="M27 48 L23 55 L33 48Z" fill="rgba(255,255,255,0.95)" />
-                        {/* Left eye — purple */}
-                        <circle cx="25" cy="34" r="3.2" fill="#6366f1" />
-                        {/* Right eye — purple */}
-                        <circle cx="39" cy="34" r="3.2" fill="#6366f1" />
-                        {/* Smile */}
-                        <path d="M26 40 Q32 44 38 40" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-                        {/* Mic arm */}
-                        <path d="M46 32 Q54 32 54 40" stroke="rgba(255,255,255,0.9)" strokeWidth="3" strokeLinecap="round" fill="none" />
-                        {/* Mic dot */}
-                        <circle cx="54" cy="41" r="2.5" fill="rgba(255,255,255,0.9)" />
-                    </svg>
-                }
-            </button>
+      <button
+        onClick={() => { setIsOpen(p => !p); setIsMinimized(false); }}
+        className={isOpen ? "support-close" : "support-fab"}
+        title={isOpen ? "Close chat" : "Chat with Support"}
+        style={{
+          position: "fixed", bottom: "28px", right: "24px", zIndex: 9999,
+          width: "62px", height: "62px",
+          borderRadius: isOpen ? "50%" : "20px",
+          background: isOpen ? "#dc2626" : "#ffffff",
+          border: isOpen ? "none" : "2px solid rgba(99,102,241,0.15)",
+          cursor: "pointer", outline: "none",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: isOpen
+            ? "0 4px 16px rgba(220,38,38,0.5)"
+            : "0 6px 28px rgba(99,102,241,0.3), 0 2px 8px rgba(0,0,0,0.1)",
+          transition: "all 280ms cubic-bezier(0.34,1.56,0.64,1)",
+          padding: 0,
+        }}
+      >
+        {isOpen
+          ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          : /* Robot support agent icon */
+            <svg width="36" height="36" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Ear left */}
+              <rect x="10" y="34" width="16" height="26" rx="8" fill="#b0b8d1"/>
+              {/* Ear right */}
+              <rect x="94" y="34" width="16" height="26" rx="8" fill="#b0b8d1"/>
+              {/* Head band */}
+              <path d="M22 42 Q22 14 60 14 Q98 14 98 42" stroke="#c8d0e8" strokeWidth="6" fill="none" strokeLinecap="round"/>
+              {/* Head */}
+              <circle cx="60" cy="52" r="32" fill="white"/>
+              <circle cx="60" cy="52" r="32" fill="none" stroke="#e8ecf4" strokeWidth="1.5"/>
+              {/* Left eye */}
+              <rect x="36" y="42" width="18" height="18" rx="6" fill="#3b5bdb"/>
+              <circle cx="40" cy="46" r="3" fill="white" opacity="0.6"/>
+              {/* Right eye */}
+              <rect x="66" y="42" width="18" height="18" rx="6" fill="#3b5bdb"/>
+              <circle cx="70" cy="46" r="3" fill="white" opacity="0.6"/>
+              {/* Mouth grille */}
+              <rect x="46" y="66" width="28" height="6" rx="3" fill="#e8ecf4"/>
+              <rect x="50" y="66" width="4" height="6" rx="2" fill="#c8d0e8"/>
+              <rect x="58" y="66" width="4" height="6" rx="2" fill="#c8d0e8"/>
+              <rect x="66" y="66" width="4" height="6" rx="2" fill="#c8d0e8"/>
+              {/* Body */}
+              <rect x="28" y="86" width="64" height="28" rx="16" fill="#a5b4fc"/>
+              <rect x="28" y="86" width="64" height="12" rx="12" fill="rgba(255,255,255,0.2)"/>
+              {/* Mic arm */}
+              <path d="M98 56 Q110 56 110 68" stroke="#b0b8d1" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
+              {/* Mic dot */}
+              <circle cx="110" cy="70" r="4" fill="#3b5bdb"/>
+            </svg>
+        }
+      </button>
 
-            {/* ── Chat Window ── */}
-            {isOpen && (
-                <div style={{
-                    position: "fixed", bottom: "96px", right: "24px", zIndex: 9999,
-                    width: "360px",
-                    maxHeight: isMinimized ? "56px" : "520px",
-                    borderRadius: "20px",
-                    background: "var(--sz-surface, #111118)",
-                    border: "1px solid rgba(99,102,241,0.3)",
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.1)",
-                    display: "flex", flexDirection: "column",
-                    overflow: "hidden",
-                    transition: "max-height 0.3s ease",
-                    fontFamily: "inherit",
-                }}>
+      {/* ── Chat Window ── */}
+      {isOpen && (
+        <div style={{
+          position: "fixed", bottom: "96px", right: "24px", zIndex: 9999,
+          width: "360px",
+          maxHeight: isMinimized ? "56px" : "520px",
+          borderRadius: "20px",
+          background: "var(--sz-surface, #111118)",
+          border: "1px solid rgba(99,102,241,0.3)",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.1)",
+          display: "flex", flexDirection: "column",
+          overflow: "hidden",
+          transition: "max-height 0.3s ease",
+          fontFamily: "inherit",
+        }}>
 
-                    {/* ── Header ── */}
-                    <div style={{
-                        background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
-                        padding: "14px 16px",
-                        display: "flex", alignItems: "center", gap: "10px",
+          {/* ── Header ── */}
+          <div style={{
+            background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
+            padding: "14px 16px",
+            display: "flex", alignItems: "center", gap: "10px",
+            flexShrink: 0,
+          }}>
+            <div style={{
+              width: "36px", height: "36px", borderRadius: "50%",
+              background: "rgba(255,255,255,0.15)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              flexShrink: 0,
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.2)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="8.5" cy="11.5" r="1.25" fill="white"/>
+                <circle cx="12" cy="11.5" r="1.25" fill="white"/>
+                <circle cx="15.5" cy="11.5" r="1.25" fill="white"/>
+              </svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff" }}>ShopBot</div>
+              <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", gap: "4px" }}>
+                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block" }}/>
+                Powered by Groq AI
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "6px" }}>
+              <button onClick={clearChat} title="Clear chat" style={{
+                background: "rgba(255,255,255,0.1)", border: "none",
+                color: "#fff", width: "28px", height: "28px", borderRadius: "6px",
+                cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center",
+              }}>🗑️</button>
+              <button onClick={() => setIsMinimized(p => !p)} title="Minimize" style={{
+                background: "rgba(255,255,255,0.1)", border: "none",
+                color: "#fff", width: "28px", height: "28px", borderRadius: "6px",
+                cursor: "pointer", fontSize: "14px", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center",
+              }}>{isMinimized ? "▲" : "▼"}</button>
+              <button onClick={() => setIsOpen(false)} title="Close" style={{
+                background: "rgba(255,255,255,0.1)", border: "none",
+                color: "#fff", width: "28px", height: "28px", borderRadius: "6px",
+                cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center",
+              }}>✕</button>
+            </div>
+          </div>
+
+          {!isMinimized && (
+            <>
+              {/* ── Messages ── */}
+              <div style={{
+                flex: 1, overflowY: "auto", padding: "16px",
+                display: "flex", flexDirection: "column", gap: "12px",
+                scrollbarWidth: "thin",
+              }}>
+                {messages.map((msg, i) => (
+                  <div key={i} style={{
+                    display: "flex",
+                    flexDirection: msg.role === "user" ? "row-reverse" : "row",
+                    alignItems: "flex-end", gap: "8px",
+                  }}>
+                    {/* Avatar */}
+                    {msg.role === "bot" && (
+                      <div style={{
+                        width: "28px", height: "28px", borderRadius: "50%",
+                        background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
                         flexShrink: 0,
-                    }}>
-                        <div style={{
-                            width: "36px", height: "36px", borderRadius: "50%",
-                            background: "rgba(255,255,255,0.15)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            flexShrink: 0,
-                        }}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.2)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                <circle cx="8.5" cy="11.5" r="1.25" fill="white" />
-                                <circle cx="12" cy="11.5" r="1.25" fill="white" />
-                                <circle cx="15.5" cy="11.5" r="1.25" fill="white" />
-                            </svg>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff" }}>ShopBot</div>
-                            <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", gap: "4px" }}>
-                                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", display: "inline-block" }} />
-                                Powered by Groq AI
-                            </div>
-                        </div>
-                        <div style={{ display: "flex", gap: "6px" }}>
-                            <button onClick={clearChat} title="Clear chat" style={{
-                                background: "rgba(255,255,255,0.1)", border: "none",
-                                color: "#fff", width: "28px", height: "28px", borderRadius: "6px",
-                                cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", justifyContent: "center",
-                            }}>🗑️</button>
-                            <button onClick={() => setIsMinimized(p => !p)} title="Minimize" style={{
-                                background: "rgba(255,255,255,0.1)", border: "none",
-                                color: "#fff", width: "28px", height: "28px", borderRadius: "6px",
-                                cursor: "pointer", fontSize: "14px", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center",
-                            }}>{isMinimized ? "▲" : "▼"}</button>
-                            <button onClick={() => setIsOpen(false)} title="Close" style={{
-                                background: "rgba(255,255,255,0.1)", border: "none",
-                                color: "#fff", width: "28px", height: "28px", borderRadius: "6px",
-                                cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center",
-                            }}>✕</button>
-                        </div>
-                    </div>
-
-                    {!isMinimized && (
-                        <>
-                            {/* ── Messages ── */}
-                            <div style={{
-                                flex: 1, overflowY: "auto", padding: "16px",
-                                display: "flex", flexDirection: "column", gap: "12px",
-                                scrollbarWidth: "thin",
-                            }}>
-                                {messages.map((msg, i) => (
-                                    <div key={i} style={{
-                                        display: "flex",
-                                        flexDirection: msg.role === "user" ? "row-reverse" : "row",
-                                        alignItems: "flex-end", gap: "8px",
-                                    }}>
-                                        {/* Avatar */}
-                                        {msg.role === "bot" && (
-                                            <div style={{
-                                                width: "28px", height: "28px", borderRadius: "50%",
-                                                background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
-                                                display: "flex", alignItems: "center", justifyContent: "center",
-                                                flexShrink: 0,
-                                            }}>
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.2)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                    <circle cx="8.5" cy="11.5" r="1.25" fill="white" />
-                                                    <circle cx="12" cy="11.5" r="1.25" fill="white" />
-                                                    <circle cx="15.5" cy="11.5" r="1.25" fill="white" />
-                                                </svg>
-                                            </div>
-                                        )}
-                                        <div style={{ maxWidth: "76%", display: "flex", flexDirection: "column", gap: "3px", alignItems: msg.role === "user" ? "flex-end" : "flex-start" }}>
-                                            <div style={{
-                                                padding: "10px 13px",
-                                                borderRadius: msg.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                                                background: msg.role === "user"
-                                                    ? "linear-gradient(135deg,#6366f1,#8b5cf6)"
-                                                    : msg.isError ? "rgba(239,68,68,0.1)" : "var(--sz-surface2, #16161f)",
-                                                border: msg.role === "bot" ? `1px solid ${msg.isError ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.07)"}` : "none",
-                                                color: msg.role === "user" ? "#fff" : msg.isError ? "#ef4444" : "var(--sz-text, #f1f1f3)",
-                                                fontSize: "13.5px", lineHeight: "1.55",
-                                                wordBreak: "break-word",
-                                                whiteSpace: "pre-wrap",
-                                            }}>
-                                                {renderText(msg.text)}
-                                            </div>
-                                            <div style={{ fontSize: "10px", color: "var(--sz-muted, #6b7280)", paddingInline: "4px" }}>
-                                                {msg.time}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-
-                                {/* Loading indicator */}
-                                {loading && (
-                                    <div style={{ display: "flex", alignItems: "flex-end", gap: "8px" }}>
-                                        <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.2)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                <circle cx="8.5" cy="11.5" r="1.25" fill="white" />
-                                                <circle cx="12" cy="11.5" r="1.25" fill="white" />
-                                                <circle cx="15.5" cy="11.5" r="1.25" fill="white" />
-                                            </svg>
-                                        </div>
-                                        <div style={{
-                                            padding: "12px 16px",
-                                            background: "var(--sz-surface2, #16161f)",
-                                            border: "1px solid rgba(255,255,255,0.07)",
-                                            borderRadius: "16px 16px 16px 4px",
-                                            display: "flex", gap: "5px", alignItems: "center",
-                                        }}>
-                                            {[0, 1, 2].map(i => (
-                                                <div key={i} style={{
-                                                    width: "7px", height: "7px", borderRadius: "50%",
-                                                    background: "#6366f1",
-                                                    animation: `chatbot-bounce 1.2s ease-in-out ${i * 0.2}s infinite`,
-                                                }} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                                <div ref={messagesEndRef} />
-                            </div>
-
-                            {/* ── Quick Replies ── */}
-                            {messages.length <= 2 && (
-                                <div style={{ padding: "0 12px 10px", display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                                    {quickReplies.map(q => (
-                                        <button key={q} onClick={() => { setInput(q); setTimeout(sendMessage, 0); }}
-                                            style={{
-                                                padding: "5px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: 600,
-                                                background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.3)",
-                                                color: "#6366f1", cursor: "pointer", fontFamily: "inherit", transition: "all .2s",
-                                            }}
-                                            onMouseEnter={e => { e.currentTarget.style.background = "rgba(99,102,241,0.2)"; }}
-                                            onMouseLeave={e => { e.currentTarget.style.background = "rgba(99,102,241,0.1)"; }}
-                                        >{q}</button>
-                                    ))}
-                                </div>
-                            )}
-
-                            {/* ── Input ── */}
-                            <div style={{
-                                padding: "12px", borderTop: "1px solid rgba(255,255,255,0.07)",
-                                display: "flex", gap: "8px", alignItems: "flex-end", flexShrink: 0,
-                                background: "var(--sz-surface, #111118)",
-                            }}>
-                                <textarea
-                                    ref={inputRef}
-                                    value={input}
-                                    onChange={e => setInput(e.target.value)}
-                                    onKeyDown={handleKey}
-                                    placeholder="Ask me anything..."
-                                    rows={1}
-                                    style={{
-                                        flex: 1, padding: "10px 14px",
-                                        background: "var(--sz-surface2, #16161f)",
-                                        border: "1px solid rgba(255,255,255,0.1)",
-                                        borderRadius: "12px", color: "var(--sz-text, #f1f1f3)",
-                                        fontSize: "13.5px", fontFamily: "inherit",
-                                        outline: "none", resize: "none",
-                                        maxHeight: "80px", overflowY: "auto",
-                                        lineHeight: "1.5",
-                                        transition: "border-color .2s",
-                                    }}
-                                    onFocus={e => e.target.style.borderColor = "#6366f1"}
-                                    onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"}
-                                />
-                                <button
-                                    onClick={sendMessage}
-                                    disabled={loading || !input.trim()}
-                                    style={{
-                                        width: "40px", height: "40px", borderRadius: "12px", flexShrink: 0,
-                                        background: loading || !input.trim() ? "rgba(99,102,241,0.3)" : "linear-gradient(135deg,#6366f1,#8b5cf6)",
-                                        border: "none", color: "#fff", fontSize: "16px",
-                                        cursor: loading || !input.trim() ? "not-allowed" : "pointer",
-                                        display: "flex", alignItems: "center", justifyContent: "center",
-                                        transition: "all .2s",
-                                        boxShadow: loading || !input.trim() ? "none" : "0 4px 12px rgba(99,102,241,0.4)",
-                                    }}
-                                >
-                                    {loading ? "⏳" : "➤"}
-                                </button>
-                            </div>
-                        </>
+                      }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.2)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <circle cx="8.5" cy="11.5" r="1.25" fill="white"/>
+                          <circle cx="12" cy="11.5" r="1.25" fill="white"/>
+                          <circle cx="15.5" cy="11.5" r="1.25" fill="white"/>
+                        </svg>
+                      </div>
                     )}
-                </div>
-            )}
+                    <div style={{ maxWidth: "76%", display: "flex", flexDirection: "column", gap: "3px", alignItems: msg.role === "user" ? "flex-end" : "flex-start" }}>
+                      <div style={{
+                        padding: "10px 13px",
+                        borderRadius: msg.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                        background: msg.role === "user"
+                          ? "linear-gradient(135deg,#6366f1,#8b5cf6)"
+                          : msg.isError ? "rgba(239,68,68,0.1)" : "var(--sz-surface2, #16161f)",
+                        border: msg.role === "bot" ? `1px solid ${msg.isError ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.07)"}` : "none",
+                        color: msg.role === "user" ? "#fff" : msg.isError ? "#ef4444" : "var(--sz-text, #f1f1f3)",
+                        fontSize: "13.5px", lineHeight: "1.55",
+                        wordBreak: "break-word",
+                        whiteSpace: "pre-wrap",
+                      }}>
+                        {renderText(msg.text)}
+                      </div>
+                      <div style={{ fontSize: "10px", color: "var(--sz-muted, #6b7280)", paddingInline: "4px" }}>
+                        {msg.time}
+                      </div>
+                    </div>
+                  </div>
+                ))}
 
-            {/* ── Keyframe Animations ── */}
-            <style>{`
+                {/* Loading indicator */}
+                {loading && (
+                  <div style={{ display: "flex", alignItems: "flex-end", gap: "8px" }}>
+                    <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2C6.477 2 2 6.177 2 11.5c0 2.014.624 3.885 1.688 5.437L2.5 21.5l4.563-1.188A9.948 9.948 0 0012 21c5.523 0 10-4.177 10-9.5S17.523 2 12 2z" fill="rgba(255,255,255,0.2)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="8.5" cy="11.5" r="1.25" fill="white"/>
+                      <circle cx="12" cy="11.5" r="1.25" fill="white"/>
+                      <circle cx="15.5" cy="11.5" r="1.25" fill="white"/>
+                    </svg>
+                  </div>
+                    <div style={{
+                      padding: "12px 16px",
+                      background: "var(--sz-surface2, #16161f)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      borderRadius: "16px 16px 16px 4px",
+                      display: "flex", gap: "5px", alignItems: "center",
+                    }}>
+                      {[0, 1, 2].map(i => (
+                        <div key={i} style={{
+                          width: "7px", height: "7px", borderRadius: "50%",
+                          background: "#6366f1",
+                          animation: `chatbot-bounce 1.2s ease-in-out ${i * 0.2}s infinite`,
+                        }}/>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* ── Quick Replies ── */}
+              {messages.length <= 2 && (
+                <div style={{ padding: "0 12px 10px", display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                  {quickReplies.map(q => (
+                    <button key={q} onClick={() => { setInput(q); setTimeout(sendMessage, 0); }}
+                      style={{
+                        padding: "5px 10px", borderRadius: "12px", fontSize: "11px", fontWeight: 600,
+                        background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.3)",
+                        color: "#6366f1", cursor: "pointer", fontFamily: "inherit", transition: "all .2s",
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.background = "rgba(99,102,241,0.2)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = "rgba(99,102,241,0.1)"; }}
+                    >{q}</button>
+                  ))}
+                </div>
+              )}
+
+              {/* ── Input ── */}
+              <div style={{
+                padding: "12px", borderTop: "1px solid rgba(255,255,255,0.07)",
+                display: "flex", gap: "8px", alignItems: "flex-end", flexShrink: 0,
+                background: "var(--sz-surface, #111118)",
+              }}>
+                <textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={handleKey}
+                  placeholder="Ask me anything..."
+                  rows={1}
+                  style={{
+                    flex: 1, padding: "10px 14px",
+                    background: "var(--sz-surface2, #16161f)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: "12px", color: "var(--sz-text, #f1f1f3)",
+                    fontSize: "13.5px", fontFamily: "inherit",
+                    outline: "none", resize: "none",
+                    maxHeight: "80px", overflowY: "auto",
+                    lineHeight: "1.5",
+                    transition: "border-color .2s",
+                  }}
+                  onFocus={e => e.target.style.borderColor = "#6366f1"}
+                  onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"}
+                />
+                <button
+                  onClick={sendMessage}
+                  disabled={loading || !input.trim()}
+                  style={{
+                    width: "40px", height: "40px", borderRadius: "12px", flexShrink: 0,
+                    background: loading || !input.trim() ? "rgba(99,102,241,0.3)" : "linear-gradient(135deg,#6366f1,#8b5cf6)",
+                    border: "none", color: "#fff", fontSize: "16px",
+                    cursor: loading || !input.trim() ? "not-allowed" : "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all .2s",
+                    boxShadow: loading || !input.trim() ? "none" : "0 4px 12px rgba(99,102,241,0.4)",
+                  }}
+                >
+                  {loading ? "⏳" : "➤"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* ── Keyframe Animations ── */}
+      <style>{`
         @keyframes chatbot-pulse {
           0%, 100% { transform: scale(1); opacity: 0.6; }
           50% { transform: scale(1.5); opacity: 0; }
@@ -461,8 +468,8 @@ function Chatbot() {
           40% { transform: translateY(-5px); opacity: 1; }
         }
       `}</style>
-        </>
-    );
+    </>
+  );
 }
 
 export default Chatbot;
