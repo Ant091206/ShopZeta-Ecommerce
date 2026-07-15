@@ -68,36 +68,38 @@ function Footer({ isDark }) {
             <div className="col-lg-4 col-md-12">
               {/* Logo — 3D Z */}
               <div className="d-flex align-items-center gap-2 mb-3">
-                <svg width="40" height="40" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  style={{ filter: "drop-shadow(0 4px 12px rgba(99,102,241,0.5))", flexShrink: 0 }}>
+                <svg width="42" height="42" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  style={{ filter: "drop-shadow(0 4px 14px rgba(99,102,241,0.55))", flexShrink: 0 }}>
                   <defs>
-                    <linearGradient id="flf" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#818cf8" /><stop offset="100%" stopColor="#6366f1" />
+                    <linearGradient id="flf" x1="10%" y1="0%" x2="90%" y2="100%">
+                      <stop offset="0%" stopColor="#818cf8" /><stop offset="50%" stopColor="#6366f1" /><stop offset="100%" stopColor="#4f46e5" />
                     </linearGradient>
-                    <linearGradient id="flt" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#a5b4fc" /><stop offset="100%" stopColor="#818cf8" />
+                    <linearGradient id="flt" x1="0%" y1="0%" x2="10%" y2="100%">
+                      <stop offset="0%" stopColor="#c7d2fe" /><stop offset="100%" stopColor="#a5b4fc" />
                     </linearGradient>
                     <linearGradient id="fls" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#3730a3" /><stop offset="100%" stopColor="#4338ca" />
+                      <stop offset="0%" stopColor="#312e81" /><stop offset="100%" stopColor="#3730a3" />
                     </linearGradient>
-                    <linearGradient id="flsh" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="white" stopOpacity="0.3" /><stop offset="60%" stopColor="white" stopOpacity="0" />
+                    <linearGradient id="flb" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#1e1b4b" /><stop offset="100%" stopColor="#312e81" />
+                    </linearGradient>
+                    <linearGradient id="flsh" x1="0%" y1="0%" x2="90%" y2="100%">
+                      <stop offset="0%" stopColor="white" stopOpacity="0.38" /><stop offset="45%" stopColor="white" stopOpacity="0.05" /><stop offset="100%" stopColor="white" stopOpacity="0" />
                     </linearGradient>
                   </defs>
-                  <ellipse cx="80" cy="128" rx="52" ry="8" fill="#1e1b4b" opacity="0.35" />
-                  <polygon points="110,30 128,14 128,110 110,126" fill="url(#fls)" />
-                  <polygon points="20,126 110,126 128,110 38,110" fill="#312e81" />
-                  <rect x="20" y="14" width="90" height="96" rx="2" fill="url(#flf)" />
-                  <polygon points="20,14 110,14 128,0 38,0" fill="url(#flt)" />
-                  <polygon points="72,38 80,32 80,48 72,54" fill="#3730a3" />
-                  <polygon points="72,54 80,48 48,86 40,92" fill="#312e81" />
-                  <polygon points="48,86 80,80 80,96 48,100" fill="#3730a3" />
-                  <path d="M30 38 L72 38 L30 86 L72 86" stroke="white" strokeWidth="11" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
-                  <rect x="20" y="14" width="90" height="96" rx="2" fill="url(#flsh)" />
-                  <line x1="20" y1="14" x2="110" y2="14" stroke="white" strokeWidth="1.5" opacity="0.55" />
-                  <line x1="20" y1="14" x2="38" y2="0" stroke="white" strokeWidth="1" opacity="0.35" />
-                  <circle cx="20" cy="14" r="2" fill="white" opacity="0.7" />
-                  <circle cx="110" cy="14" r="2" fill="white" opacity="0.4" />
+                  <ellipse cx="90" cy="148" rx="58" ry="8" fill="#6366f1" opacity="0.2" />
+                  <polygon points="30,138 118,138 136,120 48,120" fill="url(#flb)" />
+                  <polygon points="118,38 136,20 136,120 118,138" fill="url(#fls)" />
+                  <rect x="30" y="38" width="88" height="100" rx="10" fill="url(#flf)" />
+                  <polygon points="30,38 118,38 136,20 48,20" fill="url(#flt)" />
+                  <polygon points="86,60 94,53 94,68 86,75" fill="#312e81" />
+                  <polygon points="86,75 94,68 58,108 50,115" fill="#2d2a7a" />
+                  <polygon points="58,108 94,102 94,117 58,122" fill="#312e81" />
+                  <path d="M42 60 L88 60 L42 108 L88 108" stroke="white" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  <rect x="30" y="38" width="88" height="100" rx="10" fill="url(#flsh)" />
+                  <line x1="30" y1="38" x2="118" y2="38" stroke="white" strokeWidth="1.5" opacity="0.7" />
+                  <line x1="30" y1="38" x2="48" y2="20" stroke="white" strokeWidth="1" opacity="0.45" />
+                  <circle cx="30" cy="38" r="2.5" fill="white" opacity="0.8" />
                 </svg>
                 <div>
                   <div style={{ fontSize: "18px", fontWeight: 800, color: "var(--sz-text)", letterSpacing: "-0.5px" }}>

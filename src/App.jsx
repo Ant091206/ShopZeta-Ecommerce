@@ -27,12 +27,12 @@ import Chatbot from "./Chatbot";
 import ContactUs from "./Contactus";
 
 const NAV_LINKS = [
-  { name: "Home", path: "/", icon: "🏠" },
-  { name: "About", path: "/about", icon: "ℹ️" },
-  { name: "Contact", path: "/contactus", icon: "✉️" },
-  { name: "Categories", path: "/categories", icon: "⊞" },
-  { name: "Products", path: "/products", icon: "📦" },
-  { name: "Orders", path: "/orders", icon: "📋" },
+  { name: "Home",       path: "/",           icon: "🏠" },
+  { name: "About",      path: "/about",      icon: "ℹ️" },
+  { name: "Contact",    path: "/contactus",  icon: "✉️" },
+  { name: "Categories", path: "/categories", icon: "⊞"  },
+  { name: "Products",   path: "/products",   icon: "📦" },
+  { name: "Orders",     path: "/orders",     icon: "📋" },
 ];
 
 const NO_FOOTER = ["/login", "/signup", "/forgotpassword", "/otp-login"];
@@ -65,9 +65,9 @@ function App() {
 
   const toggleTheme = () => setIsDark(p => !p);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isActive = (path) => location.pathname === path;
+  const navigate   = useNavigate();
+  const location   = useLocation();
+  const isActive   = (path) => location.pathname === path;
   const showFooter = !NO_FOOTER.includes(location.pathname);
 
   const handleLoginSuccess = (userData) => { setUserSession(userData); navigate("/"); };
@@ -91,57 +91,63 @@ function App() {
       {/* ── NAVBAR ── */}
       <nav className="sz-navbar d-flex align-items-center px-3 px-md-4 gap-3">
 
-        {/* Brand — 3D extruded Z logo */}
+        {/* Brand — 3D Z logo centered */}
         <div className="d-flex align-items-center gap-2 me-3"
           style={{ cursor: "pointer", flexShrink: 0 }}
           onClick={() => navigate("/")}>
-          <svg width="44" height="44" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg"
-            style={{ filter: "drop-shadow(0 4px 12px rgba(99,102,241,0.5))" }}>
+          <svg width="46" height="46" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg"
+            style={{ filter: "drop-shadow(0 4px 14px rgba(99,102,241,0.55))", flexShrink: 0 }}>
             <defs>
-              <linearGradient id="lf" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#818cf8" />
-                <stop offset="100%" stopColor="#6366f1" />
+              <linearGradient id="lf" x1="10%" y1="0%" x2="90%" y2="100%">
+                <stop offset="0%" stopColor="#818cf8"/>
+                <stop offset="50%" stopColor="#6366f1"/>
+                <stop offset="100%" stopColor="#4f46e5"/>
               </linearGradient>
-              <linearGradient id="lt" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#a5b4fc" />
-                <stop offset="100%" stopColor="#818cf8" />
+              <linearGradient id="lt" x1="0%" y1="0%" x2="10%" y2="100%">
+                <stop offset="0%" stopColor="#c7d2fe"/>
+                <stop offset="100%" stopColor="#a5b4fc"/>
               </linearGradient>
               <linearGradient id="ls" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#3730a3" />
-                <stop offset="100%" stopColor="#4338ca" />
+                <stop offset="0%" stopColor="#312e81"/>
+                <stop offset="100%" stopColor="#3730a3"/>
               </linearGradient>
-              <linearGradient id="lsh" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="white" stopOpacity="0.3" />
-                <stop offset="60%" stopColor="white" stopOpacity="0" />
+              <linearGradient id="lb" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#1e1b4b"/>
+                <stop offset="100%" stopColor="#312e81"/>
+              </linearGradient>
+              <linearGradient id="lsh" x1="0%" y1="0%" x2="90%" y2="100%">
+                <stop offset="0%" stopColor="white" stopOpacity="0.38"/>
+                <stop offset="45%" stopColor="white" stopOpacity="0.05"/>
+                <stop offset="100%" stopColor="white" stopOpacity="0"/>
               </linearGradient>
             </defs>
-            {/* Shadow */}
-            <ellipse cx="80" cy="128" rx="52" ry="8" fill="#1e1b4b" opacity="0.35" />
-            {/* Right side */}
-            <polygon points="110,30 128,14 128,110 110,126" fill="url(#ls)" />
-            {/* Bottom side */}
-            <polygon points="20,126 110,126 128,110 38,110" fill="#312e81" />
+            {/* Glow shadow */}
+            <ellipse cx="90" cy="148" rx="58" ry="8" fill="#6366f1" opacity="0.2"/>
+            {/* Bottom face */}
+            <polygon points="30,138 118,138 136,120 48,120" fill="url(#lb)"/>
+            {/* Right face */}
+            <polygon points="118,38 136,20 136,120 118,138" fill="url(#ls)"/>
             {/* Front face */}
-            <rect x="20" y="14" width="90" height="96" rx="2" fill="url(#lf)" />
-            {/* Top side */}
-            <polygon points="20,14 110,14 128,0 38,0" fill="url(#lt)" />
-            {/* Z right side depth — top bar */}
-            <polygon points="72,38 80,32 80,48 72,54" fill="#3730a3" />
-            {/* Z right side depth — diagonal */}
-            <polygon points="72,54 80,48 48,86 40,92" fill="#312e81" />
-            {/* Z right side depth — bottom bar */}
-            <polygon points="48,86 80,80 80,96 48,100" fill="#3730a3" />
-            {/* Z front face */}
-            <path d="M30 38 L72 38 L30 86 L72 86"
-              stroke="white" strokeWidth="11" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
+            <rect x="30" y="38" width="88" height="100" rx="10" fill="url(#lf)"/>
+            {/* Top face */}
+            <polygon points="30,38 118,38 136,20 48,20" fill="url(#lt)"/>
+            {/* Z depth — top bar */}
+            <polygon points="86,60 94,53 94,68 86,75" fill="#312e81"/>
+            {/* Z depth — diagonal */}
+            <polygon points="86,75 94,68 58,108 50,115" fill="#2d2a7a"/>
+            {/* Z depth — bottom bar */}
+            <polygon points="58,108 94,102 94,117 58,122" fill="#312e81"/>
+            {/* Z — centered, bold, round */}
+            <path d="M42 60 L88 60 L42 108 L88 108"
+              stroke="white" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
             {/* Shine */}
-            <rect x="20" y="14" width="90" height="96" rx="2" fill="url(#lsh)" />
-            {/* Top highlight */}
-            <line x1="20" y1="14" x2="110" y2="14" stroke="white" strokeWidth="1.5" opacity="0.55" />
-            <line x1="20" y1="14" x2="38" y2="0" stroke="white" strokeWidth="1" opacity="0.35" />
-            {/* Corner dots */}
-            <circle cx="20" cy="14" r="2" fill="white" opacity="0.7" />
-            <circle cx="110" cy="14" r="2" fill="white" opacity="0.4" />
+            <rect x="30" y="38" width="88" height="100" rx="10" fill="url(#lsh)"/>
+            {/* Top edge highlight */}
+            <line x1="30" y1="38" x2="118" y2="38" stroke="white" strokeWidth="1.5" opacity="0.7"/>
+            <line x1="30" y1="38" x2="48" y2="20" stroke="white" strokeWidth="1" opacity="0.45"/>
+            <line x1="118" y1="38" x2="136" y2="20" stroke="white" strokeWidth="0.5" opacity="0.2"/>
+            {/* Corner accent */}
+            <circle cx="30" cy="38" r="2.5" fill="white" opacity="0.8"/>
           </svg>
           <div>
             <div className="sz-brand-name">Shop<span>Zeta</span></div>
@@ -222,7 +228,7 @@ function App() {
             <svg width="17" height="17" viewBox="0 0 24 24"
               fill={isActive("/wishlist") ? "currentColor" : "none"}
               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
             </svg>
           </Link>
 
@@ -232,8 +238,8 @@ function App() {
             title="Cart">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
             </svg>
             <span className="sz-badge-dot">!</span>
           </Link>
@@ -260,25 +266,25 @@ function App() {
       {/* ── MAIN CONTENT ── */}
       <div className="sz-main">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/contactus" element={<ContactUs />} />
-          <Route path="/categories" element={<CategoryList />} />
-          <Route path="/subcategories" element={<SubCategoryList />} />
-          <Route path="/products" element={<Product />} />
-          <Route path="/subcategories/:categoryId" element={<SubCategoryList />} />
+          <Route path="/"                                    element={<Home />} />
+          <Route path="/about"                               element={<AboutUs />} />
+          <Route path="/contactus"                           element={<ContactUs />} />
+          <Route path="/categories"                          element={<CategoryList />} />
+          <Route path="/subcategories"                       element={<SubCategoryList />} />
+          <Route path="/products"                            element={<Product />} />
+          <Route path="/subcategories/:categoryId"           element={<SubCategoryList />} />
           <Route path="/products/subcategory/:subCategoryId" element={<Product />} />
-          <Route path="/product-details/:productId" element={<ProductDetails userSession={userSession} />} />
-          <Route path="/wishlist" element={<Wishlist userSession={userSession} />} />
-          <Route path="/cart" element={<Cart userSession={userSession} />} />
-          <Route path="/dashboard" element={<Dashboard userSession={userSession} />} />
-          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-          <Route path="/otp-login" element={<OtpLogin setUserSession={setUserSession} />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgotpassword" element={<Forgotpassword />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/order-details/:orderId" element={<OrderDetails />} />
+          <Route path="/product-details/:productId"          element={<ProductDetails userSession={userSession} />} />
+          <Route path="/wishlist"                            element={<Wishlist userSession={userSession} />} />
+          <Route path="/cart"                                element={<Cart userSession={userSession} />} />
+          <Route path="/dashboard"                           element={<Dashboard userSession={userSession} />} />
+          <Route path="/login"                               element={<Login onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="/otp-login"                           element={<OtpLogin setUserSession={setUserSession} />} />
+          <Route path="/signup"                              element={<Signup />} />
+          <Route path="/forgotpassword"                      element={<Forgotpassword />} />
+          <Route path="/checkout"                            element={<Checkout />} />
+          <Route path="/orders"                              element={<Orders />} />
+          <Route path="/order-details/:orderId"              element={<OrderDetails />} />
         </Routes>
 
         {showFooter && <Footer isDark={isDark} />}
@@ -324,9 +330,9 @@ function App() {
         }}
       >
         <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.668 4.61 1.832 6.504L4 29l7.698-1.807A11.94 11.94 0 0016 27c6.627 0 12-5.373 12-12S22.627 3 16 3z" fill="#fff" />
-          <path d="M16 5.5c-5.238 0-9.5 4.262-9.5 9.5 0 2.09.68 4.02 1.832 5.59l-.96 3.54 3.66-.96A9.46 9.46 0 0016 24.5c5.238 0 9.5-4.262 9.5-9.5S21.238 5.5 16 5.5z" fill="#25D366" />
-          <path d="M21.5 18.72c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.09 3.2 5.08 4.36.71.27 1.26.43 1.69.55.71.2 1.36.17 1.87.1.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#fff" />
+          <path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.668 4.61 1.832 6.504L4 29l7.698-1.807A11.94 11.94 0 0016 27c6.627 0 12-5.373 12-12S22.627 3 16 3z" fill="#fff"/>
+          <path d="M16 5.5c-5.238 0-9.5 4.262-9.5 9.5 0 2.09.68 4.02 1.832 5.59l-.96 3.54 3.66-.96A9.46 9.46 0 0016 24.5c5.238 0 9.5-4.262 9.5-9.5S21.238 5.5 16 5.5z" fill="#25D366"/>
+          <path d="M21.5 18.72c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.09 3.2 5.08 4.36.71.27 1.26.43 1.69.55.71.2 1.36.17 1.87.1.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#fff"/>
         </svg>
       </a>
 
