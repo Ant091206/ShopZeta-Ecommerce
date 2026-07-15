@@ -68,38 +68,21 @@ function Footer({ isDark }) {
             <div className="col-lg-4 col-md-12">
               {/* Logo — 3D Z */}
               <div className="d-flex align-items-center gap-2 mb-3">
-                <svg width="42" height="42" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  style={{ filter: "drop-shadow(0 4px 14px rgba(99,102,241,0.55))", flexShrink: 0 }}>
+                <svg width="42" height="42" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <defs>
-                    <linearGradient id="flf" x1="10%" y1="0%" x2="90%" y2="100%">
-                      <stop offset="0%" stopColor="#818cf8" /><stop offset="50%" stopColor="#6366f1" /><stop offset="100%" stopColor="#4f46e5" />
-                    </linearGradient>
-                    <linearGradient id="flt" x1="0%" y1="0%" x2="10%" y2="100%">
-                      <stop offset="0%" stopColor="#c7d2fe" /><stop offset="100%" stopColor="#a5b4fc" />
-                    </linearGradient>
-                    <linearGradient id="fls" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#312e81" /><stop offset="100%" stopColor="#3730a3" />
-                    </linearGradient>
-                    <linearGradient id="flb" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#1e1b4b" /><stop offset="100%" stopColor="#312e81" />
-                    </linearGradient>
-                    <linearGradient id="flsh" x1="0%" y1="0%" x2="90%" y2="100%">
-                      <stop offset="0%" stopColor="white" stopOpacity="0.38" /><stop offset="45%" stopColor="white" stopOpacity="0.05" /><stop offset="100%" stopColor="white" stopOpacity="0" />
+                    <linearGradient id="fmbg" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#6366f1" />
+                      <stop offset="60%" stopColor="#7c3aed" />
+                      <stop offset="100%" stopColor="#9333ea" />
                     </linearGradient>
                   </defs>
-                  <ellipse cx="90" cy="148" rx="58" ry="8" fill="#6366f1" opacity="0.2" />
-                  <polygon points="30,138 118,138 136,120 48,120" fill="url(#flb)" />
-                  <polygon points="118,38 136,20 136,120 118,138" fill="url(#fls)" />
-                  <rect x="30" y="38" width="88" height="100" rx="10" fill="url(#flf)" />
-                  <polygon points="30,38 118,38 136,20 48,20" fill="url(#flt)" />
-                  <polygon points="86,60 94,53 94,68 86,75" fill="#312e81" />
-                  <polygon points="86,75 94,68 58,108 50,115" fill="#2d2a7a" />
-                  <polygon points="58,108 94,102 94,117 58,122" fill="#312e81" />
-                  <path d="M42 60 L88 60 L42 108 L88 108" stroke="white" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                  <rect x="30" y="38" width="88" height="100" rx="10" fill="url(#flsh)" />
-                  <line x1="30" y1="38" x2="118" y2="38" stroke="white" strokeWidth="1.5" opacity="0.7" />
-                  <line x1="30" y1="38" x2="48" y2="20" stroke="white" strokeWidth="1" opacity="0.45" />
-                  <circle cx="30" cy="38" r="2.5" fill="white" opacity="0.8" />
+                  <rect x="3" y="4" width="44" height="44" rx="14" fill="#7c3aed" opacity="0.25" />
+                  <rect width="46" height="46" rx="14" fill="url(#fmbg)" />
+                  <rect x="0" y="0" width="46" height="16" rx="14" fill="rgba(255,255,255,0.12)" />
+                  <rect x="0" y="10" width="46" height="6" fill="rgba(255,255,255,0.06)" />
+                  <rect x="0.75" y="0.75" width="44.5" height="44.5" rx="13.25" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+                  <path d="M14 18 L36 18 L14 34 L36 34" stroke="rgba(0,0,0,0.2)" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" fill="none" transform="translate(1.5,1.5)" />
+                  <path d="M13 16 L35 16 L13 32 L35 32" stroke="white" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                 </svg>
                 <div>
                   <div style={{ fontSize: "18px", fontWeight: 800, color: "var(--sz-text)", letterSpacing: "-0.5px" }}>
